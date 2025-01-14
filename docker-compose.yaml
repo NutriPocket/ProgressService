@@ -1,0 +1,22 @@
+services:
+    web:
+        build: .
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+        environment:
+            - DATABASE_URL=mysql://root:password@db:3306/mydb
+
+    db:
+        image: mysql:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: mydb
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql_data:/data/mysql
+
+volumes:
+    mysql_data:
