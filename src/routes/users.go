@@ -8,7 +8,7 @@ func UsersRoutes(router *gin.Engine) {
 	{
 		users_routes := router.Group("/users")
 		users_routes.GET("/", getUsers)
-		users_routes.GET("/:id", getUser)
+		users_routes.GET("/:username", getUser)
 	}
 }
 
