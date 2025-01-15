@@ -1,7 +1,9 @@
 package routes
 
 import (
+	"github.com/MaxiOtero6/go-auth-rest/service"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func UsersRoutes(router *gin.Engine) {
@@ -12,6 +14,8 @@ func UsersRoutes(router *gin.Engine) {
 	}
 }
 
-func getUsers(c *gin.Context) {}
+func getUsers(c *gin.Context) {
+	c.JSON(http.StatusOK, service.GetAllUsers())
+}
 
 func getUser(c *gin.Context) {}

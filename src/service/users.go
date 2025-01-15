@@ -14,3 +14,7 @@ func CreateUser(userData *model.BaseUser) model.User {
 
 	return repository.CreateUser(userData)
 }
+
+func GetAllUsers() []model.User {
+	return repository.GetAllUsers()
+}
