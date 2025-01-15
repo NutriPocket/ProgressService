@@ -20,10 +20,18 @@ func CreateUser(userData *model.BaseUser) model.User {
 	return user
 }
 
-func GetUser() {
+func GetUser(username string) model.User {
+	var user model.User
 
+	database.DB.Raw("SELECT username, email FROM users WHERE username = ?", username).Scan(&user)
+
+	return user
 }
 
-func GetAllUsers() {
+func GetAllUsers() []model.User {
+	var users []model.User
 
+	database.DB.Raw("SELECT username, email FROM users").Scan(&users)
+
+	return users
 }
