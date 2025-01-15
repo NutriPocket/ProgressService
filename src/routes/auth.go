@@ -42,7 +42,7 @@ func register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, service.CreateUser(&userData))
+	c.JSON(http.StatusCreated, service.CreateUser(&userData))
 }
 
 func login(c *gin.Context) {}
