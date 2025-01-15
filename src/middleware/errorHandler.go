@@ -20,6 +20,7 @@ func ErrorHandler() gin.HandlerFunc {
 		c.Next()
 
 		err := c.Errors.Last()
+		
 		if err != nil {
 			var status int
 			var detail string
@@ -32,6 +33,10 @@ func ErrorHandler() gin.HandlerFunc {
 				title = e.Title
 			case *model.AuthenticationError:
 				status = http.StatusUnauthorized
+				detail = e.Detail
+				title = e.Title
+			case *model.NotFoundError:
+				status = http.StatusNotFound
 				detail = e.Detail
 				title = e.Title
 			default:
