@@ -18,3 +18,13 @@ func CreateUser(userData *model.BaseUser) model.User {
 func GetAllUsers() []model.User {
 	return repository.GetAllUsers()
 }
+
+func GetUser(username string) (model.User, error) {
+	user := repository.GetUser(username)
+
+	if user == (model.User{}) {
+		return user, &model.NotFoundError{Title: "User not found", Detail: "The user with the username " + username + " was not found"}
+	}
+
+	return user, nil
+}
