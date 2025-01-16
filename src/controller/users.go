@@ -2,6 +2,7 @@ package controller
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/MaxiOtero6/go-auth-rest/model"
 )
@@ -32,4 +33,12 @@ func ValidateEmail(email string) error {
 	}
 
 	return nil
+}
+
+func ValidateUsernameOrEmail(str string) error {
+	if strings.Contains(str, "@") {
+		return ValidateEmail(str)
+	}
+
+	return ValidateString(str, "username")
 }
