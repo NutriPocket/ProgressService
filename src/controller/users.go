@@ -7,7 +7,9 @@ import (
 	"github.com/MaxiOtero6/go-auth-rest/model"
 )
 
-func ValidateString(str string, field string) error {
+type UserController struct{}
+
+func (controller *UserController) ValidateString(str string, field string) error {
 	if str == "" {
 		return &model.ValidationError{Detail: "The " + field + " field is required", Title: "Empty " + field + " field"}
 	}
@@ -19,10 +21,10 @@ func ValidateString(str string, field string) error {
 	return nil
 }
 
-func ValidateEmail(email string) error {
+func (controller *UserController) ValidateEmail(email string) error {
 	var err error
 
-	if err = ValidateString(email, "email"); err != nil {
+	if err = controller.ValidateString(email, "email"); err != nil {
 		return err
 	}
 
@@ -35,10 +37,10 @@ func ValidateEmail(email string) error {
 	return nil
 }
 
-func ValidateUsernameOrEmail(str string) error {
+func (controller *UserController) ValidateUsernameOrEmail(str string) error {
 	if strings.Contains(str, "@") {
-		return ValidateEmail(str)
+		return controller.ValidateEmail(str)
 	}
 
-	return ValidateString(str, "username")
+	return controller.ValidateString(str, "username")
 }

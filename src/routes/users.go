@@ -23,6 +23,8 @@ func getUsers(c *gin.Context) {
 func getUser(c *gin.Context) {
 	username := c.Param("username")
 
+	controller := controller.UserController{}
+
 	controller.ValidateString(username, "username")
 
 	user, err := service.GetUser(username)

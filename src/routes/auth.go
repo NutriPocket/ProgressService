@@ -27,6 +27,8 @@ func register(c *gin.Context) {
 		return
 	}
 
+	controller := controller.UserController{}
+
 	if err := controller.ValidateString(userData.Username, "username"); err != nil {
 		c.Error(err)
 		return
@@ -42,18 +44,7 @@ func register(c *gin.Context) {
 		return
 	}
 
-	createdUser := service.CreateUser(&userData)
-
-	jwtService := service.NewJWTService()
-
-	signed, err := jwtService.Sign(createdUser)
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{"data": createdUser, "token": signed})
+	c.JSON(http.StatusCreated, service.CreateUser(&userData))
 }
 
 func login(c *gin.Context) {}
