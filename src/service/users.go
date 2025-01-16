@@ -8,18 +8,20 @@ import (
 	"github.com/MaxiOtero6/go-auth-rest/repository"
 )
 
-func CreateUser(userData *model.BaseUser) model.User {
+type UserService struct {}
+
+func (service *UserService) CreateUser(userData *model.BaseUser) model.User {
 	hashPasswordBytes := sha256.Sum256([]byte(userData.Password))
 	userData.Password = hex.EncodeToString(hashPasswordBytes[:])
 
 	return repository.CreateUser(userData)
 }
 
-func GetAllUsers() []model.User {
+func (service *UserService) GetAllUsers() []model.User {
 	return repository.GetAllUsers()
 }
 
-func GetUser(username string) (model.User, error) {
+func (service *UserService) GetUser(username string) (model.User, error) {
 	user := repository.GetUser(username)
 
 	if user == (model.User{}) {

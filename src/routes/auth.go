@@ -44,7 +44,19 @@ func register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, service.CreateUser(&userData))
+	jwtService := service.NewJWTService()
+	service := service.UserService{}
+
+	createdUser := service.CreateUser(&userData)
+
+	signed, err := jwtService.Sign(createdUser)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"data": createdUser, "token": signed})
 }
 
 func login(c *gin.Context) {}

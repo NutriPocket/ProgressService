@@ -17,6 +17,8 @@ func UsersRoutes(router *gin.Engine) {
 }
 
 func getUsers(c *gin.Context) {
+	service := service.UserService{}
+
 	c.JSON(http.StatusOK, service.GetAllUsers())
 }
 
@@ -26,6 +28,8 @@ func getUser(c *gin.Context) {
 	controller := controller.UserController{}
 
 	controller.ValidateString(username, "username")
+
+	service := service.UserService{}
 
 	user, err := service.GetUser(username)
 
