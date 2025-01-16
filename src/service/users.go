@@ -22,6 +22,28 @@ func (service *UserService) CreateUser(userData *model.BaseUser) model.User {
 	return repository.CreateUser(userData)
 }
 
+func (service *UserService) Login(userData *model.LoginUser) (model.User, error) {
+	savedUser := repository.GetUserWithPassword(userData.EmailOrUsername)
+
+	if savedUser == (model.BaseUser{}) {
+		return model.User{}, &model.AuthenticationError{
+			Title:  "Credentials don't match1",
+			Detail: "User identification or password are wrong, please try again",
+		}
+	}
+
+	userData.Password = service.EncodePassword(userData.Password)
+
+	if userData.Password != savedUser.Password {
+		return model.User{}, &model.AuthenticationError{
+			Title:  "Credentials don't match2",
+			Detail: "User identification or password are wrong, please try again",
+		}
+	}
+
+	return model.User{Username: savedUser.Username, Email: savedUser.Email}, nil
+}
+
 func (service *UserService) GetAllUsers() []model.User {
 	return repository.GetAllUsers()
 }

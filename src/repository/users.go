@@ -28,6 +28,14 @@ func GetUser(username string) model.User {
 	return user
 }
 
+func GetUserWithPassword(emailOrUsername string) model.BaseUser {
+	var user model.BaseUser
+
+	database.DB.Raw("SELECT username, email, password FROM users WHERE username = ? OR email = ?", emailOrUsername, emailOrUsername).Scan(&user)
+
+	return user
+}
+
 func GetAllUsers() []model.User {
 	var users []model.User
 

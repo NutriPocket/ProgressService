@@ -59,7 +59,38 @@ func register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"data": createdUser, "token": signed})
 }
 
-func login(c *gin.Context) {}
+func login(c *gin.Context) {
+	body := model.LoginUser{}
+
+	if err := c.BindJSON(&body); err != nil {
+		c.Error(err)
+		return
+	}
+
+	controller := controller.UserController{}
+
+	controller.ValidateUsernameOrEmail(body.EmailOrUsername)
+	controller.ValidateString(body.Password, "password")
+
+	jwtService := service.NewJWTService()
+	service := service.UserService{}
+
+	user, err := service.Login(&body)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	signed, err := jwtService.Sign(user)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"data": user, "token": signed})
+}
 
 func logout(c *gin.Context) {}
 
