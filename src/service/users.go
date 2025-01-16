@@ -8,11 +8,16 @@ import (
 	"github.com/MaxiOtero6/go-auth-rest/repository"
 )
 
-type UserService struct {}
+type UserService struct{}
+
+func (service *UserService) EncodePassword(password string) string {
+	hashPasswordBytes := sha256.Sum256([]byte(password))
+	return hex.EncodeToString(hashPasswordBytes[:])
+
+}
 
 func (service *UserService) CreateUser(userData *model.BaseUser) model.User {
-	hashPasswordBytes := sha256.Sum256([]byte(userData.Password))
-	userData.Password = hex.EncodeToString(hashPasswordBytes[:])
+	userData.Password = service.EncodePassword(userData.Password)
 
 	return repository.CreateUser(userData)
 }
