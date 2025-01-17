@@ -20,7 +20,7 @@ func ErrorHandler() gin.HandlerFunc {
 		c.Next()
 
 		err := c.Errors.Last()
-		
+
 		if err != nil {
 			var status int
 			var detail string
