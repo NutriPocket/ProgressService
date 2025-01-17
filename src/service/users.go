@@ -27,7 +27,7 @@ func (service *UserService) Login(userData *model.LoginUser) (model.User, error)
 
 	if savedUser == (model.BaseUser{}) {
 		return model.User{}, &model.AuthenticationError{
-			Title:  "Credentials don't match1",
+			Title:  "Credentials don't match",
 			Detail: "User identification or password are wrong, please try again",
 		}
 	}
@@ -36,7 +36,7 @@ func (service *UserService) Login(userData *model.LoginUser) (model.User, error)
 
 	if userData.Password != savedUser.Password {
 		return model.User{}, &model.AuthenticationError{
-			Title:  "Credentials don't match2",
+			Title:  "Credentials don't match",
 			Detail: "User identification or password are wrong, please try again",
 		}
 	}
