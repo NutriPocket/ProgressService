@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/MaxiOtero6/go-auth-rest/model"
+	"github.com/MaxiOtero6/go-auth-rest/repository"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -95,4 +97,24 @@ func (service *JWTService) Decode(tokenString string) (model.JWTPayload, error) 
 
 		return model.JWTPayload{}, err
 	}
+}
+
+func (service *JWTService) Blacklist(tokenString string, payload model.JWTPayload) {
+	lastDotIndex := strings.LastIndex(tokenString, ".")
+	signature := tokenString[lastDotIndex:]
+
+	exp := payload.ExpiresAt.Time
+
+	repository := repository.JWTRepository{}
+
+	repository.Blacklist(signature, exp)
+}
+
+func (service *JWTService) IsBlacklisted(tokenString string) bool {
+	lastDotIndex := strings.LastIndex(tokenString, ".")
+	signature := tokenString[lastDotIndex:]
+
+	repository := repository.JWTRepository{}
+
+	return repository.IsBlacklisted(signature)
 }
