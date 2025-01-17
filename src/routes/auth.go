@@ -15,7 +15,6 @@ func AuthRoutes(router *gin.Engine) {
 		auth_routes.POST("/register", register)
 		auth_routes.POST("/login", login)
 		auth_routes.POST("/logout", logout)
-		auth_routes.POST("/refresh", refresh)
 	}
 }
 
@@ -92,6 +91,22 @@ func login(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"data": user, "token": signed})
 }
 
-func logout(c *gin.Context) {}
+func logout(c *gin.Context) {
+	body := struct{ Token string }{}
 
-func refresh(c *gin.Context) {}
+	if err := c.BindJSON(&body); err != nil {
+		c.Error(err)
+		return
+	}
+
+	jwtService := service.NewJWTService()
+	decoded, err := jwtService.Decode(body.Token)
+
+	if err != nil {
+		c.Error(err)
+
+		return
+	}
+
+	jwtService.Blacklist(body.Token, decoded)
+}
