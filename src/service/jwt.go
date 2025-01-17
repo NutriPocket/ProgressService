@@ -27,11 +27,13 @@ func NewJWTService() JWTService {
 }
 
 func (service *JWTService) Sign(payload model.User) (string, error) {
+	nowUtc := time.Now().UTC()
+
 	claim := model.JWTPayload{
 		Payload: payload,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate((time.Now().Add(time.Minute * 5))),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(nowUtc.Add(time.Minute * 5)),
+			IssuedAt:  jwt.NewNumericDate(nowUtc),
 		},
 	}
 
