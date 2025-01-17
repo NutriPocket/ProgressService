@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"regexp"
@@ -52,7 +53,7 @@ func (service *JWTService) isJWT(tokenString string) bool {
 
 func (service *JWTService) Verify(tokenString string) (bool, error) {
 	if !service.isJWT(tokenString) {
-		return false, fmt.Errorf("the provided token is not a jwt string")
+		return false, &model.ValidationError{Title: "Invalid JWT", Detail: "The provided token doesn't have JWT format"}
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &model.JWTPayload{}, func(token *jwt.Token) (interface{}, error) {
@@ -68,7 +69,10 @@ func (service *JWTService) Verify(tokenString string) (bool, error) {
 
 func (service *JWTService) Decode(tokenString string) (model.JWTPayload, error) {
 	if !service.isJWT(tokenString) {
-		return model.JWTPayload{}, fmt.Errorf("the provided token is not a jwt string")
+		return model.JWTPayload{}, &model.ValidationError{
+			Title:  "Invalid JWT",
+			Detail: "The provided token doesn't have JWT format",
+		}
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &model.JWTPayload{}, func(token *jwt.Token) (interface{}, error) {
@@ -82,6 +86,13 @@ func (service *JWTService) Decode(tokenString string) (model.JWTPayload, error) 
 	if claims, ok := token.Claims.(*model.JWTPayload); ok && token.Valid {
 		return *claims, nil
 	} else {
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return model.JWTPayload{}, &model.AuthenticationError{
+				Title:  "Expired token",
+				Detail: "Your token has expired, please try logging in again",
+			}
+		}
+
 		return model.JWTPayload{}, err
 	}
 }
