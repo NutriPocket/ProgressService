@@ -26,6 +26,7 @@ func main() {
 	router := gin.Default()
 
 	router.Use(middleware.ErrorHandler())
+	router.Use(middleware.AuthMiddleware())
 	routes.AuthRoutes(router)
 	routes.UsersRoutes(router)
 

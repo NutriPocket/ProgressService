@@ -26,7 +26,7 @@ func NewJWTService() JWTService {
 	return JWTService{key: []byte(key)}
 }
 
-func (service *JWTService) Sign(payload interface{}) (string, error) {
+func (service *JWTService) Sign(payload model.User) (string, error) {
 	claim := model.JWTPayload{
 		Payload: payload,
 		RegisteredClaims: jwt.RegisteredClaims{
