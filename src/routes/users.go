@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	"github.com/MaxiOtero6/go-auth-rest/controller"
+	controller "github.com/MaxiOtero6/go-auth-rest/controller/users"
 	"github.com/MaxiOtero6/go-auth-rest/service"
 	"github.com/gin-gonic/gin"
 )
