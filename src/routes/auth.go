@@ -88,7 +88,7 @@ func login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"data": user, "token": signed})
+	c.JSON(http.StatusOK, gin.H{"data": user, "token": signed})
 }
 
 func logout(c *gin.Context) {
@@ -109,4 +109,6 @@ func logout(c *gin.Context) {
 	}
 
 	jwtService.Blacklist(body.Token, decoded)
+
+	c.Status(http.StatusNoContent)
 }
