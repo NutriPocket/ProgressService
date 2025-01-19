@@ -9,6 +9,10 @@ import (
 )
 
 func getRootPath(urlPath string) string {
+	if urlPath == "" {
+		return ""
+	}
+
 	urlPath = urlPath[1:]
 
 	if idx := strings.Index(urlPath, "/"); idx != -1 {

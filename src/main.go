@@ -5,7 +5,8 @@ import (
 	"os"
 
 	"github.com/MaxiOtero6/go-auth-rest/database"
-	"github.com/MaxiOtero6/go-auth-rest/middleware"
+	middlewareAuth "github.com/MaxiOtero6/go-auth-rest/middleware/auth_middleware"
+	middlewareErr "github.com/MaxiOtero6/go-auth-rest/middleware/error_handler"
 	"github.com/MaxiOtero6/go-auth-rest/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -25,8 +26,8 @@ func main() {
 
 	router := gin.Default()
 
-	router.Use(middleware.ErrorHandler())
-	router.Use(middleware.AuthMiddleware())
+	router.Use(middlewareErr.ErrorHandler())
+	router.Use(middlewareAuth.AuthMiddleware())
 	routes.AuthRoutes(router)
 	routes.UsersRoutes(router)
 
