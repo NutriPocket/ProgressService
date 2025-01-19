@@ -9,6 +9,8 @@ import (
 )
 
 func getRootPath(urlPath string) string {
+	urlPath = urlPath[1:]
+
 	if idx := strings.Index(urlPath, "/"); idx != -1 {
 		return urlPath[:idx]
 	} else {
@@ -40,7 +42,7 @@ func getToken(authHeader string) (token string, err error) {
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		urlPath := c.Request.URL.Path[1:]
+		urlPath := c.Request.URL.Path
 
 		if getRootPath(urlPath) == "auth" {
 			c.Next()
