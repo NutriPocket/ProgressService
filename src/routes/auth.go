@@ -43,7 +43,7 @@ func register(c *gin.Context) {
 		return
 	}
 
-	jwtService := service.NewJWTService()
+	jwtService := service.NewJWTService(nil)
 	service := service.UserService{}
 
 	createdUser := service.CreateUser(&userData)
@@ -71,7 +71,7 @@ func login(c *gin.Context) {
 	controller.ValidateUsernameOrEmail(body.EmailOrUsername)
 	controller.ValidateString(body.Password, "password")
 
-	jwtService := service.NewJWTService()
+	jwtService := service.NewJWTService(nil)
 	service := service.UserService{}
 
 	user, err := service.Login(&body)
@@ -99,7 +99,7 @@ func logout(c *gin.Context) {
 		return
 	}
 
-	jwtService := service.NewJWTService()
+	jwtService := service.NewJWTService(nil)
 
 	if err := jwtService.Blacklist(body.Token); err != nil {
 		c.Error(err)

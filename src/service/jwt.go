@@ -14,19 +14,26 @@ import (
 )
 
 type JWTService struct {
-	key []byte
+	key        []byte
+	repository repository.IJWTRepository
 }
 
 var jwtKey = os.Getenv("JWT_SECRET_KEY")
 
-func NewJWTService() JWTService {
+func NewJWTService(jwtRepository *repository.IJWTRepository) JWTService {
 	var key = []byte("secret")
+
+	var repo repository.IJWTRepository = &repository.JWTRepository{}
 
 	if jwtKey != "" {
 		key = []byte(jwtKey)
 	}
 
-	return JWTService{key: []byte(key)}
+	if jwtRepository != nil {
+		repo = *jwtRepository
+	}
+
+	return JWTService{key: []byte(key), repository: repo}
 }
 
 func (service *JWTService) Sign(payload model.User) (string, error) {
@@ -108,12 +115,10 @@ func (service *JWTService) Blacklist(tokenString string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	exp := decoded.ExpiresAt.Time
 
-	repository := repository.JWTRepository{}
-
-	repository.Blacklist(signature, exp)
+	service.repository.Blacklist(signature, exp)
 
 	return nil
 }
@@ -122,7 +127,5 @@ func (service *JWTService) IsBlacklisted(tokenString string) bool {
 	lastDotIndex := strings.LastIndex(tokenString, ".")
 	signature := tokenString[lastDotIndex:]
 
-	repository := repository.JWTRepository{}
-
-	return repository.IsBlacklisted(signature)
+	return service.repository.IsBlacklisted(signature)
 }

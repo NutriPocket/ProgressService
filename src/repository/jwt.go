@@ -6,6 +6,12 @@ import (
 	"github.com/MaxiOtero6/go-auth-rest/database"
 )
 
+type IJWTRepository interface {
+	Blacklist(signature string, expiresAt time.Time)
+	IsBlacklisted(signature string) bool
+}
+
+
 type JWTRepository struct{}
 
 func (repository *JWTRepository) Blacklist(signature string, expiresAt time.Time) {

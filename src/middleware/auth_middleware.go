@@ -58,7 +58,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		jwtService := service.NewJWTService()
+		jwtService := service.NewJWTService(nil)
 
 		if jwtService.IsBlacklisted(token) {
 			c.Error(&model.AuthenticationError{
