@@ -44,7 +44,7 @@ func register(c *gin.Context) {
 	}
 
 	jwtService := service.NewJWTService(nil)
-	service := service.UserService{}
+	service := service.NewUserService(nil)
 
 	createdUser := service.CreateUser(&userData)
 
@@ -72,7 +72,7 @@ func login(c *gin.Context) {
 	controller.ValidateString(body.Password, "password")
 
 	jwtService := service.NewJWTService(nil)
-	service := service.UserService{}
+	service := service.NewUserService(nil)
 
 	user, err := service.Login(&body)
 

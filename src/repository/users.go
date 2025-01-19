@@ -5,7 +5,16 @@ import (
 	"github.com/MaxiOtero6/go-auth-rest/model"
 )
 
-func CreateUser(userData *model.BaseUser) model.User {
+type IUserRepository interface {
+	CreateUser(userData *model.BaseUser) model.User
+	GetUser(username string) model.User
+	GetUserWithPassword(emailOrUsername string) model.BaseUser
+	GetAllUsers() []model.User
+}
+
+type UserRepository struct{}
+
+func (repository *UserRepository) CreateUser(userData *model.BaseUser) model.User {
 	var user model.User
 
 	database.DB.Exec(`
@@ -20,7 +29,7 @@ func CreateUser(userData *model.BaseUser) model.User {
 	return user
 }
 
-func GetUser(username string) model.User {
+func (repository *UserRepository) GetUser(username string) model.User {
 	var user model.User
 
 	database.DB.Raw("SELECT username, email FROM users WHERE username = ?", username).Scan(&user)
@@ -28,7 +37,7 @@ func GetUser(username string) model.User {
 	return user
 }
 
-func GetUserWithPassword(emailOrUsername string) model.BaseUser {
+func (repository *UserRepository) GetUserWithPassword(emailOrUsername string) model.BaseUser {
 	var user model.BaseUser
 
 	database.DB.Raw("SELECT username, email, password FROM users WHERE username = ? OR email = ?", emailOrUsername, emailOrUsername).Scan(&user)
@@ -36,7 +45,7 @@ func GetUserWithPassword(emailOrUsername string) model.BaseUser {
 	return user
 }
 
-func GetAllUsers() []model.User {
+func (repository *UserRepository) GetAllUsers() []model.User {
 	var users []model.User
 
 	database.DB.Raw("SELECT username, email FROM users").Scan(&users)

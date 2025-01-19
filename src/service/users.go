@@ -8,7 +8,19 @@ import (
 	"github.com/MaxiOtero6/go-auth-rest/repository"
 )
 
-type UserService struct{}
+type UserService struct {
+	repository repository.IUserRepository
+}
+
+func NewUserService(userRepository *repository.IUserRepository) UserService {
+	var repo repository.IUserRepository = &repository.UserRepository{}
+
+	if userRepository != nil {
+		repo = *userRepository
+	}
+
+	return UserService{repository: repo}
+}
 
 func (service *UserService) EncodePassword(password string) string {
 	hashPasswordBytes := sha256.Sum256([]byte(password))
@@ -19,11 +31,11 @@ func (service *UserService) EncodePassword(password string) string {
 func (service *UserService) CreateUser(userData *model.BaseUser) model.User {
 	userData.Password = service.EncodePassword(userData.Password)
 
-	return repository.CreateUser(userData)
+	return service.repository.CreateUser(userData)
 }
 
 func (service *UserService) Login(userData *model.LoginUser) (model.User, error) {
-	savedUser := repository.GetUserWithPassword(userData.EmailOrUsername)
+	savedUser := service.repository.GetUserWithPassword(userData.EmailOrUsername)
 
 	if savedUser == (model.BaseUser{}) {
 		return model.User{}, &model.AuthenticationError{
@@ -45,11 +57,11 @@ func (service *UserService) Login(userData *model.LoginUser) (model.User, error)
 }
 
 func (service *UserService) GetAllUsers() []model.User {
-	return repository.GetAllUsers()
+	return service.repository.GetAllUsers()
 }
 
 func (service *UserService) GetUser(username string) (model.User, error) {
-	user := repository.GetUser(username)
+	user := service.repository.GetUser(username)
 
 	if user == (model.User{}) {
 		return user, &model.NotFoundError{Title: "User not found", Detail: "The user with the username " + username + " was not found"}
