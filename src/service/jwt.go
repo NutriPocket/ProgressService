@@ -99,15 +99,23 @@ func (service *JWTService) Decode(tokenString string) (model.JWTPayload, error) 
 	}
 }
 
-func (service *JWTService) Blacklist(tokenString string, payload model.JWTPayload) {
+func (service *JWTService) Blacklist(tokenString string) error {
 	lastDotIndex := strings.LastIndex(tokenString, ".")
 	signature := tokenString[lastDotIndex:]
 
-	exp := payload.ExpiresAt.Time
+	decoded, err := service.Decode(tokenString)
+
+	if err != nil {
+		return err
+	}
+	
+	exp := decoded.ExpiresAt.Time
 
 	repository := repository.JWTRepository{}
 
 	repository.Blacklist(signature, exp)
+
+	return nil
 }
 
 func (service *JWTService) IsBlacklisted(tokenString string) bool {

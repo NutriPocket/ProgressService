@@ -100,15 +100,12 @@ func logout(c *gin.Context) {
 	}
 
 	jwtService := service.NewJWTService()
-	decoded, err := jwtService.Decode(body.Token)
 
-	if err != nil {
+	if err := jwtService.Blacklist(body.Token); err != nil {
 		c.Error(err)
 
 		return
 	}
-
-	jwtService.Blacklist(body.Token, decoded)
 
 	c.Status(http.StatusNoContent)
 }
