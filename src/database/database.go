@@ -13,6 +13,10 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() {
+	if DB != nil {
+		return
+	}
+
 	db_user := os.Getenv("DB_USER")
 	db_password := os.Getenv("DB_PASSWORD")
 	db_name := os.Getenv("DB_NAME")
