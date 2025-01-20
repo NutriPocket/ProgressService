@@ -52,10 +52,10 @@ func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 
-		err := c.Errors.Last().Err
+		err := c.Errors.Last()
 
 		if err != nil {
-			rfcError := parseError(err, c.Request.URL.Path)
+			rfcError := parseError(err.Err, c.Request.URL.Path)
 
 			c.JSON(rfcError.Status, rfcError)
 
