@@ -48,7 +48,7 @@ func (repository *UserRepository) GetUserWithPassword(emailOrUsername string) mo
 func (repository *UserRepository) GetAllUsers() []model.User {
 	var users []model.User
 
-	database.DB.Raw("SELECT username, email FROM users").Scan(&users)
+	database.DB.Raw("SELECT username, email FROM users ORDER BY created_at DESC").Scan(&users)
 
 	return users
 }
