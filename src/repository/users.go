@@ -6,49 +6,69 @@ import (
 )
 
 type IUserRepository interface {
-	CreateUser(userData *model.BaseUser) model.User
-	GetUser(username string) model.User
-	GetUserWithPassword(emailOrUsername string) model.BaseUser
-	GetAllUsers() []model.User
+	CreateUser(userData *model.BaseUser) (model.User, error)
+	GetUser(username string) (model.User, error)
+	GetUserWithPassword(emailOrUsername string) (model.BaseUser, error)
+	GetAllUsers() ([]model.User, error)
 }
 
 type UserRepository struct{}
 
-func (repository *UserRepository) CreateUser(userData *model.BaseUser) model.User {
+func (repository *UserRepository) CreateUser(userData *model.BaseUser) (model.User, error) {
 	var user model.User
 
-	database.DB.Exec(`
+	res := database.DB.Exec(`
 			INSERT INTO users (username, email, password) 
 			VALUES (?, ?, ?);
 		`,
 		userData.Username, userData.Email, userData.Password,
 	)
 
-	database.DB.Raw("SELECT username, email FROM users WHERE username = ?", userData.Username).Scan(&user)
+	if res.Error != nil {
+		return model.User{}, res.Error
+	}
 
-	return user
+	res = database.DB.Raw("SELECT username, email FROM users WHERE username = ?", userData.Username).Scan(&user)
+
+	if res.Error != nil {
+		return model.User{}, res.Error
+	}
+
+	return user, nil
 }
 
-func (repository *UserRepository) GetUser(username string) model.User {
+func (repository *UserRepository) GetUser(username string) (model.User, error) {
 	var user model.User
 
-	database.DB.Raw("SELECT username, email FROM users WHERE username = ?", username).Scan(&user)
+	res := database.DB.Raw("SELECT username, email FROM users WHERE username = ?", username).Scan(&user)
 
-	return user
+	if res.Error != nil {
+		return model.User{}, res.Error
+	}
+
+	return user, nil
 }
 
-func (repository *UserRepository) GetUserWithPassword(emailOrUsername string) model.BaseUser {
+func (repository *UserRepository) GetUserWithPassword(emailOrUsername string) (model.BaseUser, error) {
 	var user model.BaseUser
 
-	database.DB.Raw("SELECT username, email, password FROM users WHERE username = ? OR email = ?", emailOrUsername, emailOrUsername).Scan(&user)
+	res := database.DB.Raw("SELECT username, email, password FROM users WHERE username = ? OR email = ?", emailOrUsername, emailOrUsername).Scan(&user)
 
-	return user
+	if res.Error != nil {
+		return model.BaseUser{}, res.Error
+	}
+
+	return user, nil
 }
 
-func (repository *UserRepository) GetAllUsers() []model.User {
+func (repository *UserRepository) GetAllUsers() ([]model.User, error) {
 	var users []model.User
 
-	database.DB.Raw("SELECT username, email FROM users ORDER BY created_at DESC").Scan(&users)
+	res := database.DB.Raw("SELECT username, email FROM users ORDER BY created_at DESC").Scan(&users)
 
-	return users
+	if res.Error != nil {
+		return []model.User{}, res.Error
+	}
+
+	return users, nil
 }

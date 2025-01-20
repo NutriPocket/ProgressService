@@ -46,7 +46,12 @@ func register(c *gin.Context) {
 	jwtService := service.NewJWTService(nil)
 	service := service.NewUserService(nil)
 
-	createdUser := service.CreateUser(&userData)
+	createdUser, err := service.CreateUser(&userData)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
 	signed, err := jwtService.Sign(createdUser)
 

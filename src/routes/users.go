@@ -19,7 +19,14 @@ func UsersRoutes(router *gin.Engine) {
 func getUsers(c *gin.Context) {
 	service := service.NewUserService(nil)
 
-	c.JSON(http.StatusOK, service.GetAllUsers())
+	users, err := service.GetAllUsers()
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
 }
 
 func getUser(c *gin.Context) {

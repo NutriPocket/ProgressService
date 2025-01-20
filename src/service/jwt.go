@@ -123,7 +123,7 @@ func (service *JWTService) Blacklist(tokenString string) error {
 	return nil
 }
 
-func (service *JWTService) IsBlacklisted(tokenString string) bool {
+func (service *JWTService) IsBlacklisted(tokenString string) (bool, error) {
 	lastDotIndex := strings.LastIndex(tokenString, ".")
 	signature := tokenString[lastDotIndex:]
 
