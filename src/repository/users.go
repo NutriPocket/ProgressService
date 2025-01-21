@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/MaxiOtero6/go-auth-rest/database"
 	"github.com/MaxiOtero6/go-auth-rest/model"
+	"github.com/go-sql-driver/mysql"
 )
 
 type IUserRepository interface {
@@ -25,6 +28,13 @@ func (repository *UserRepository) CreateUser(userData *model.BaseUser) (model.Us
 	)
 
 	if res.Error != nil {
+		if errors.Is(res.Error, &mysql.MySQLError{Number: 1062}) {
+			return model.User{}, &model.EntityAlreadyExistsError{
+				Title:  "Username or email already in use",
+				Detail: "The provided username or email are already in use, try something else",
+			}
+		}
+
 		return model.User{}, res.Error
 	}
 

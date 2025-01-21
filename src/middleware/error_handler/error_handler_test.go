@@ -107,4 +107,30 @@ func TestParseError(t *testing.T) {
 			t.Errorf("The parsed error isn't equal to the expected one")
 		}
 	})
+
+	t.Run("An entity already exists error is parsed with status code 409", func(t *testing.T) {
+		urlPath := "/"
+
+		detail := "The specified user already exists, please try another username"
+		title := "User already exists"
+
+		expected := errorRfc9457{
+			Title:    title,
+			Detail:   detail,
+			Status:   http.StatusConflict,
+			Type:     "about:blank",
+			Instance: "/",
+		}
+
+		err := &model.EntityAlreadyExistsError{
+			Title:  title,
+			Detail: detail,
+		}
+
+		result := parseError(err, urlPath)
+
+		if !reflect.DeepEqual(expected, result) {
+			t.Errorf("The parsed error isn't equal to the expected one")
+		}
+	})
 }

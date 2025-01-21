@@ -22,7 +22,10 @@ func register(c *gin.Context) {
 	var userData model.BaseUser
 
 	if err := c.BindJSON(&userData); err != nil {
-		c.Error(err)
+		c.Error(&model.ValidationError{
+			Title:  "Wrong body format",
+			Detail: "Expected a json body with the user account data in it",
+		})
 		return
 	}
 
@@ -67,7 +70,10 @@ func login(c *gin.Context) {
 	body := model.LoginUser{}
 
 	if err := c.BindJSON(&body); err != nil {
-		c.Error(err)
+		c.Error(&model.ValidationError{
+			Title:  "Wrong body format",
+			Detail: "Expected a json body with the user credentials in it",
+		})
 		return
 	}
 
@@ -100,7 +106,10 @@ func logout(c *gin.Context) {
 	body := struct{ Token string }{}
 
 	if err := c.BindJSON(&body); err != nil {
-		c.Error(err)
+		c.Error(&model.ValidationError{
+			Title:  "Wrong body format",
+			Detail: "Expected a json body with the key 'token' in it",
+		})
 		return
 	}
 

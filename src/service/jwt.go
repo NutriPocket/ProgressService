@@ -118,7 +118,9 @@ func (service *JWTService) Blacklist(tokenString string) error {
 
 	exp := decoded.ExpiresAt.Time
 
-	service.repository.Blacklist(signature, exp)
+	if err := service.repository.Blacklist(signature, exp); err != nil {
+		return err
+	}
 
 	return nil
 }

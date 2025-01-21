@@ -28,3 +28,12 @@ type NotFoundError struct {
 func (e *NotFoundError) Error() string {
 	return fmt.Sprintf("%s, %s", e.Title, e.Detail)
 }
+
+type EntityAlreadyExistsError struct {
+	Detail string
+	Title  string
+}
+
+func (e *EntityAlreadyExistsError) Error() string {
+	return fmt.Sprintf("%s, %s", e.Title, e.Detail)
+}

@@ -1,9 +1,12 @@
 package repository
 
 import (
+	"errors"
 	"time"
 
 	"github.com/MaxiOtero6/go-auth-rest/database"
+	"github.com/MaxiOtero6/go-auth-rest/model"
+	"github.com/go-sql-driver/mysql"
 )
 
 type IJWTRepository interface {
@@ -20,6 +23,13 @@ func (repository *JWTRepository) Blacklist(signature string, expiresAt time.Time
 	`, signature, expiresAt)
 
 	if res.Error != nil {
+		if errors.Is(res.Error, &mysql.MySQLError{Number: 1062}) {
+			return &model.EntityAlreadyExistsError{
+				Title:  "Token no longer used",
+				Detail: "The provided token is no longer in use",
+			}
+		}
+
 		return res.Error
 	}
 

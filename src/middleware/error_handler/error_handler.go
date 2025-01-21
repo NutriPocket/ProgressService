@@ -33,6 +33,10 @@ func parseError(err error, urlPath string) errorRfc9457 {
 		status = http.StatusNotFound
 		detail = e.Detail
 		title = e.Title
+	case *model.EntityAlreadyExistsError:
+		status = http.StatusConflict
+		detail = e.Detail
+		title = e.Title
 	default:
 		status = http.StatusInternalServerError
 		detail = "An unknown error has occurred"
