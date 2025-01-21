@@ -13,9 +13,13 @@ RUN go build -C src -o /bin/app
 
 FROM alpine:latest
 
-WORKDIR /app
+WORKDIR /code
 
-COPY --from=builder /bin/app .
+COPY --from=builder /bin/app /code/bin/app
 
-CMD ["./app"]
+COPY .env .
+
+WORKDIR /code/bin
+
+CMD ["/code/bin/app"]
 

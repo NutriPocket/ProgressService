@@ -25,7 +25,13 @@ func ConnectDB() {
 	db_password := os.Getenv("DB_PASSWORD")
 	db_name := os.Getenv("DB_NAME")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(0.0.0.0:3306)/%s?charset=utf8mb4&parseTime=True&loc=UTC", db_user, db_password, db_name)
+	db_host := os.Getenv("DB_HOST")
+
+	if db_host == "" {
+		db_host = "0.0.0.0"
+	}
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8mb4&parseTime=True&loc=UTC", db_user, db_password, db_host, db_name)
 
 	var try uint
 	var err error
