@@ -17,9 +17,6 @@ jobs:
                     MYSQL_DATABASE: mydb
                 ports:
                     - 3306/tcp
-                volumes:
-                    - mysql_data:/var/lib/mysql # Use standard MySQL data directory
-                    - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Copy init.sql
                 options: >-
                     --health-cmd "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD}"
                     --health-interval 10s
@@ -28,6 +25,8 @@ jobs:
                     --health-start-period 30s
         steps:
             - uses: actions/checkout@v3
+            - name: Set up MySQL
+              run: mysql --protocol=tcp -h localhost --port 3306 -uroot -ppassword < ./init.sql
             - name: Set up Go
               uses: actions/setup-go@v4
               with:
