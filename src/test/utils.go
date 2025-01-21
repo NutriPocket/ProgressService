@@ -2,12 +2,17 @@ package test
 
 import (
 	"log"
+	"os"
 
 	"github.com/MaxiOtero6/go-auth-rest/database"
 	"github.com/joho/godotenv"
 )
 
 func loadEnv() {
+	if ci_test := os.Getenv("CI_TEST"); ci_test != "" {
+		return
+	}
+
 	err := godotenv.Load("../../../.env.test")
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
