@@ -1,3 +1,4 @@
+// Package service contains the services that will be used in the application.
 package service
 
 import (

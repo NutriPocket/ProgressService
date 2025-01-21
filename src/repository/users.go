@@ -1,3 +1,4 @@
+// Package repository provides structs and methods to interact with the database.
 package repository
 
 import (
@@ -8,10 +9,22 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+// IUserRepository is an interface that contains the methods that will implement a repository struct that interact with the users table.
 type IUserRepository interface {
+	// CreateUser creates a new user in the database.
+	// userData is the user data to create.
+	// It returns the created user and an error if the operation fails.
 	CreateUser(userData *model.BaseUser) (model.User, error)
+	// GetUser gets a user from the database.
+	// username is the username of the user to get.
+	// It returns the user and an error if the operation fails.
 	GetUser(username string) (model.User, error)
+	// GetUserWithPassword gets a user with the password from the database.
+	// emailOrUsername is the email or username of the user to get.
+	// It returns the user and an error if the operation fails.
 	GetUserWithPassword(emailOrUsername string) (model.BaseUser, error)
+	// GetAllUsers gets all the users from the database.
+	// It returns all the users and an error if the operation fails.
 	GetAllUsers() ([]model.User, error)
 }
 

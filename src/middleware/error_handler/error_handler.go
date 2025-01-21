@@ -1,3 +1,4 @@
+// Package middleware provides custom middlewares for the API
 package middleware
 
 import (
@@ -7,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// errorRfc9457 is a struct that will be used to return errors in the RFC 9457 format
 type errorRfc9457 struct {
 	Type     string `json:"type"`
 	Title    string `json:"title"`
@@ -15,6 +17,10 @@ type errorRfc9457 struct {
 	Instance string `json:"instance"`
 }
 
+// parseError parses an error and returns an error in the RFC 9457 format
+// err is the error to parse
+// urlPath is the URL path of the request
+// It returns an error in the RFC 9457 format
 func parseError(err error, urlPath string) errorRfc9457 {
 	var status int
 	var detail string
@@ -52,6 +58,7 @@ func parseError(err error, urlPath string) errorRfc9457 {
 	}
 }
 
+// ErrorHandler is a middleware that handles errors and returns them in the RFC 9457 format
 func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()

@@ -1,3 +1,4 @@
+// Package utils provide utility functions that are used in the application.
 package utils
 
 import (
@@ -8,6 +9,8 @@ import (
 	middlewareErr "github.com/MaxiOtero6/go-auth-rest/middleware/error_handler"
 )
 
+// SetupRouter sets up the routes for the application.
+// It returns a router with the middlewares and routes set up.
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 

@@ -1,3 +1,4 @@
+// Package routes defines the routes for the API endpoints and the handlers for each route.
 package routes
 
 import (

@@ -1,3 +1,4 @@
+// Package controller provides the user controller struct that will be used to validate the user input received from http requests.
 package controller
 
 import (
@@ -7,8 +8,12 @@ import (
 	"github.com/MaxiOtero6/go-auth-rest/model"
 )
 
+// UserController is a struct that will be used to validate the user input received from http requests.
 type UserController struct{}
 
+// ValidateString validates a string and returns an error if the string is empty or longer than 100 characters.
+// str is he string to validate.
+// field is the field name of the string.
 func (controller *UserController) ValidateString(str string, field string) error {
 	if str == "" {
 		return &model.ValidationError{Detail: "The " + field + " field is required", Title: "Empty " + field + " field"}
@@ -21,6 +26,8 @@ func (controller *UserController) ValidateString(str string, field string) error
 	return nil
 }
 
+// ValidateEmail validates an email and returns an error if the email is not a valid email address.
+// email is the email to validate.
 func (controller *UserController) ValidateEmail(email string) error {
 	var err error
 
@@ -37,6 +44,8 @@ func (controller *UserController) ValidateEmail(email string) error {
 	return nil
 }
 
+// ValidateUsernameOrEmail validates a string that can be an email or a username.
+// str is the string to validate.
 func (controller *UserController) ValidateUsernameOrEmail(str string) error {
 	if strings.Contains(str, "@") {
 		return controller.ValidateEmail(str)

@@ -1,3 +1,4 @@
+// Package middleware provides custom middlewares for the API
 package middleware
 
 import (
@@ -8,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// getRootPath returns the root path of a URL
+// @param urlPath string - The URL path
 func getRootPath(urlPath string) string {
 	if urlPath == "" {
 		return ""
@@ -22,6 +25,10 @@ func getRootPath(urlPath string) string {
 	}
 }
 
+// getToken returns the token from the Authorization header
+// authHeader is the Authorization header
+// It returns the token parsed from the Authorization header 
+// It returns an error if the Authorization header is empty or has an invalid format
 func getToken(authHeader string) (token string, err error) {
 	if authHeader == "" {
 		return "", &model.AuthenticationError{
@@ -44,6 +51,8 @@ func getToken(authHeader string) (token string, err error) {
 	return token, nil
 }
 
+// AuthMiddleware is a middleware that checks if the user is authorized to access the endpoint
+// Only the endpoints that start with /auth are allowed to be accessed without authorization
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		urlPath := c.Request.URL.Path

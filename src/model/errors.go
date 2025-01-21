@@ -1,3 +1,4 @@
+// Package model contains the structs types that will be used in the application.
 package model
 
 import "fmt"

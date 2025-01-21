@@ -1,3 +1,4 @@
+// Package database provides connection functions to the database.
 package database
 
 import (
@@ -12,6 +13,9 @@ import (
 
 var DB *gorm.DB
 
+// ConnectDB connects to the database.
+// If it fails to connect to the database, it will try again 5 times. If it fails all 5 times, it will panic.
+// If it connects to the database, it will print a message to the console and assign the DB variable to the connection.
 func ConnectDB() {
 	if DB != nil {
 		return

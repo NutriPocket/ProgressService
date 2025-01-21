@@ -1,3 +1,4 @@
+// Package service contains the services that will be used in the application.
 package service
 
 import (
@@ -13,13 +14,19 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// JWTService is a struct that will be used to sign, verify, decode and blacklist JWT tokens.
 type JWTService struct {
+	// key is the secret key used to sign the JWT tokens.
 	key        []byte
+	// repository is the repository that will be used to interact with the jwt_blacklist table.
 	repository repository.IJWTRepository
 }
 
 var jwtKey = os.Getenv("JWT_SECRET_KEY")
 
+// NewJWTService creates a new JWTService with the provided IJWTRepository.
+// jwtRepository is the repository that will be used to interact with the jwt_blacklist table.
+// It returns a new JWTService.
 func NewJWTService(jwtRepository *repository.IJWTRepository) JWTService {
 	var key = []byte("secret")
 
@@ -36,6 +43,9 @@ func NewJWTService(jwtRepository *repository.IJWTRepository) JWTService {
 	return JWTService{key: []byte(key), repository: repo}
 }
 
+// Sign signs a JWT token with the provided payload.
+// payload is the user data to sign.
+// It returns the signed token and an error if the operation fails.
 func (service *JWTService) Sign(payload model.User) (string, error) {
 	nowUtc := time.Now().UTC()
 
@@ -54,12 +64,18 @@ func (service *JWTService) Sign(payload model.User) (string, error) {
 	return tokenString, err
 }
 
+// isJWT checks if a token has the JWT format.
+// tokenString is the token to check.
+// It returns true if the token has the JWT format, false otherwise.
 func (service *JWTService) isJWT(tokenString string) bool {
 	jwtRegex := regexp.MustCompile(`^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$`)
 
 	return jwtRegex.MatchString(tokenString)
 }
 
+// Verify verifies a JWT token.
+// tokenString is the token to verify.
+// It returns true if the token is valid, false otherwise.
 func (service *JWTService) Verify(tokenString string) (bool, error) {
 	if !service.isJWT(tokenString) {
 		return false, &model.ValidationError{Title: "Invalid JWT", Detail: "The provided token doesn't have JWT format"}
@@ -76,6 +92,9 @@ func (service *JWTService) Verify(tokenString string) (bool, error) {
 	return token.Valid, err
 }
 
+// Decode decodes a JWT token.
+// tokenString is the token to decode.
+// It returns the decoded payload and an error if the operation fails.
 func (service *JWTService) Decode(tokenString string) (model.JWTPayload, error) {
 	if !service.isJWT(tokenString) {
 		return model.JWTPayload{}, &model.ValidationError{
@@ -106,6 +125,9 @@ func (service *JWTService) Decode(tokenString string) (model.JWTPayload, error) 
 	}
 }
 
+// Blacklist blacklists a JWT token.
+// tokenString is the token to blacklist.
+// It returns an error if the operation fails.
 func (service *JWTService) Blacklist(tokenString string) error {
 	lastDotIndex := strings.LastIndex(tokenString, ".")
 	signature := tokenString[lastDotIndex:]
@@ -125,6 +147,9 @@ func (service *JWTService) Blacklist(tokenString string) error {
 	return nil
 }
 
+// IsBlacklisted checks if a JWT token is blacklisted.
+// tokenString is the token to check.
+// It returns true if the token is blacklisted, false otherwise and an error if the operation fails.
 func (service *JWTService) IsBlacklisted(tokenString string) (bool, error) {
 	lastDotIndex := strings.LastIndex(tokenString, ".")
 	signature := tokenString[lastDotIndex:]
