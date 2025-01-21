@@ -11,10 +11,10 @@ jobs:
         runs-on: ubuntu-latest
         services:
             mysql:
-                image: mysql:latest # Or a specific version like mysql:5.7
+                image: mysql:latest
                 env:
                     MYSQL_ROOT_PASSWORD: password
-                    MYSQL_DATABASE: mydb # Optional: create a specific database
+                    MYSQL_DATABASE: mydb
                 ports:
                     - 3306/tcp
                 volumes:
@@ -25,13 +25,13 @@ jobs:
                     --health-interval 10s
                     --health-timeout 5s
                     --health-retries 5
-                    --health-start-period 10s
+                    --health-start-period 30s
         steps:
             - uses: actions/checkout@v3
             - name: Set up Go
               uses: actions/setup-go@v4
               with:
-                  go-version: "1.23.4" # Or your Go version
+                  go-version: "1.23.4"
             - name: Install dependencies
               run: cd src && go mod download
             - name: Run tests
@@ -39,6 +39,7 @@ jobs:
                   DB_USER: root
                   DB_PASSWORD: password
                   DB_NAME: mydb
+                  DB_HOST: 127.0.0.1 # Explicitly set host
                   HOST: 0.0.0.0
                   PORT: 8080
                   JWT_SECRET_KEY: secret
