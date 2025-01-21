@@ -17,6 +17,9 @@ jobs:
                     MYSQL_DATABASE: mydb # Optional: create a specific database
                 ports:
                     - 3306/tcp
+                volumes:
+                    - mysql_data:/var/lib/mysql # Use standard MySQL data directory
+                    - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Copy init.sql
                 options: >-
                     --health-cmd "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD}"
                     --health-interval 10s
