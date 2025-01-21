@@ -40,4 +40,4 @@ jobs:
                   PORT: 8080
                   JWT_SECRET_KEY: secret
                   CI_TEST: true
-              run: cd src && go test ./*/*/
+              run: cd src && go test -v ./*/*/
