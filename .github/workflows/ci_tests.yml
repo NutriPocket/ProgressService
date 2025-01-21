@@ -26,7 +26,7 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: Set up MySQL
-              run: mysql --protocol=tcp -h localhost --port 3306 -uroot -ppassword < ./init.sql
+              run: mysql -h 127.0.0.1 -u root -ppassword mydb < ./init.sql
             - name: Set up Go
               uses: actions/setup-go@v4
               with:
