@@ -33,6 +33,8 @@ func ConnectDB() {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8mb4&parseTime=True&loc=UTC", db_user, db_password, db_host, db_name)
 
+	log.Printf("DSN: %s\n", dsn)
+
 	var try uint
 	var err error
 
