@@ -40,4 +40,5 @@ jobs:
                   PORT: 8080
                   JWT_SECRET_KEY: secret
                   CI_TEST: true
+                  DB_HOST: mysql
               run: cd src && go test -v ./*/*/
