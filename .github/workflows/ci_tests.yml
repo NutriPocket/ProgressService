@@ -28,7 +28,7 @@ jobs:
             - name: Wait for MySQL
               run: |
                   echo "Waiting for MySQL to be healthy..."
-                  timeout 60 bash -c 'while ! mysqladmin ping -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -u root -ppassword; do sleep 5; done'
+                  MYSQL_PWD=password timeout 60 bash -c 'while ! mysqladmin ping -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -u root; do sleep 5; done'
                   echo "MySQL is healthy!"
             - name: Set up MySQL
               run: |
