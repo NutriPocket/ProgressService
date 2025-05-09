@@ -3,20 +3,22 @@ package e2e_test
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/MaxiOtero6/go-auth-rest/model"
-	"github.com/MaxiOtero6/go-auth-rest/repository"
-	"github.com/MaxiOtero6/go-auth-rest/service"
-	"github.com/MaxiOtero6/go-auth-rest/test"
+	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/UserService/repository"
+	"github.com/NutriPocket/UserService/service"
+	"github.com/NutriPocket/UserService/test"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetUsers(t *testing.T) {
-	jwtService := service.NewJWTService(nil)
+	jwtService, err := service.NewJWTService(nil)
+	if err != nil {
+		log.Fatalf("An error ocurred when creating the JWT service: %v\n", err)
+	}
 
 	testUser := model.User{
 		Username: "test", Email: "test@test.com",
@@ -69,7 +71,10 @@ func TestGetUsers(t *testing.T) {
 	t.Run("It should retrieve all the users in the table", func(t *testing.T) {
 		defer test.ClearUsers()
 		w := httptest.NewRecorder()
-		repository := repository.UserRepository{}
+		repository, err := repository.NewUserRepository(nil)
+		if err != nil {
+			t.Errorf("An error ocurred when creating the user repository: %v\n", err)
+		}
 
 		repository.CreateUser(&model.BaseUser{Username: "test1", Email: "test1@test.com", Password: "test1"})
 		repository.CreateUser(&model.BaseUser{Username: "test2", Email: "test2@test.com", Password: "test2"})
@@ -83,7 +88,7 @@ func TestGetUsers(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code, "Status code should be 200")
 
 		var data []model.User
-		err := json.Unmarshal(w.Body.Bytes(), &data)
+		err = json.Unmarshal(w.Body.Bytes(), &data)
 		if err != nil {
 			log.Fatal("The response body is not a []model.User parseable string, ", err)
 		}
@@ -97,7 +102,10 @@ func TestGetUsers(t *testing.T) {
 }
 
 func TestGetUser(t *testing.T) {
-	jwtService := service.NewJWTService(nil)
+	jwtService, err := service.NewJWTService(nil)
+	if err != nil {
+		log.Fatalf("An error ocurred when creating the JWT service: %v\n", err)
+	}
 
 	testUser := model.User{
 		Username: "test", Email: "test@test.com",
@@ -141,7 +149,7 @@ func TestGetUser(t *testing.T) {
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusNotFound, w.Code, "Status code should be 404")
-		log.Println(w.Body.String())
+
 		var data map[string]interface{}
 		err := json.Unmarshal(w.Body.Bytes(), &data)
 		if err != nil {
@@ -159,7 +167,10 @@ func TestGetUser(t *testing.T) {
 		username := "test"
 		w := httptest.NewRecorder()
 
-		repository := repository.UserRepository{}
+		repository, err := repository.NewUserRepository(nil)
+		if err != nil {
+			t.Errorf("An error ocurred when creating the user repository: %v\n", err)
+		}
 
 		repository.CreateUser(&model.BaseUser{Username: testUser.Username, Email: testUser.Email, Password: "test"})
 		repository.CreateUser(&model.BaseUser{Username: "test2", Email: "test2@test.com", Password: "test2"})
@@ -174,7 +185,7 @@ func TestGetUser(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code, "Status code should be 200")
 
 		var data model.User
-		err := json.Unmarshal(w.Body.Bytes(), &data)
+		err = json.Unmarshal(w.Body.Bytes(), &data)
 		if err != nil {
 			log.Fatal("The response body is not a model.User parseable string, ", err)
 		}

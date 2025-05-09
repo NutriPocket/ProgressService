@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/MaxiOtero6/go-auth-rest/database"
-	"github.com/MaxiOtero6/go-auth-rest/model"
+	"github.com/NutriPocket/UserService/database"
+	"github.com/NutriPocket/UserService/model"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -24,10 +24,28 @@ type IJWTRepository interface {
 	IsBlacklisted(signature string) (bool, error)
 }
 
-type JWTRepository struct{}
+type JWTRepository struct {
+	db IDatabase
+}
 
-func (repository *JWTRepository) Blacklist(signature string, expiresAt time.Time) error {
-	res := database.DB.Exec(`
+func NewJWTRepository(db IDatabase) (*JWTRepository, error) {
+	var err error
+
+	if db == nil {
+		db, err = database.GetPoolConnection()
+		if err != nil {
+			log.Errorf("Failed to connect to database")
+			return nil, err
+		}
+	}
+
+	return &JWTRepository{
+		db: db,
+	}, nil
+}
+
+func (r *JWTRepository) Blacklist(signature string, expiresAt time.Time) error {
+	res := r.db.Exec(`
 		INSERT INTO jwt_blacklist (signature, expires_at)
 		VALUES (?, ?);
 	`, signature, expiresAt)
@@ -46,10 +64,10 @@ func (repository *JWTRepository) Blacklist(signature string, expiresAt time.Time
 	return nil
 }
 
-func (repository *JWTRepository) IsBlacklisted(signature string) (bool, error) {
+func (r *JWTRepository) IsBlacklisted(signature string) (bool, error) {
 	var blacklistedJWT struct{ Signature string }
 
-	res := database.DB.Raw(`
+	res := r.db.Raw(`
 		SELECT signature
 		FROM jwt_blacklist
 		WHERE signature = ?

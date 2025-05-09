@@ -9,15 +9,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/MaxiOtero6/go-auth-rest/model"
-	"github.com/MaxiOtero6/go-auth-rest/repository"
+	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/UserService/repository"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 // JWTService is a struct that will be used to sign, verify, decode and blacklist JWT tokens.
 type JWTService struct {
 	// key is the secret key used to sign the JWT tokens.
-	key        []byte
+	key []byte
 	// repository is the repository that will be used to interact with the jwt_blacklist table.
 	repository repository.IJWTRepository
 }
@@ -27,20 +27,22 @@ var jwtKey = os.Getenv("JWT_SECRET_KEY")
 // NewJWTService creates a new JWTService with the provided IJWTRepository.
 // jwtRepository is the repository that will be used to interact with the jwt_blacklist table.
 // It returns a new JWTService.
-func NewJWTService(jwtRepository *repository.IJWTRepository) JWTService {
+func NewJWTService(jwtRepository repository.IJWTRepository) (*JWTService, error) {
 	var key = []byte("secret")
-
-	var repo repository.IJWTRepository = &repository.JWTRepository{}
-
+	var err error
 	if jwtKey != "" {
 		key = []byte(jwtKey)
 	}
 
-	if jwtRepository != nil {
-		repo = *jwtRepository
+	if jwtRepository == nil {
+		jwtRepository, err = repository.NewJWTRepository(nil)
+		if err != nil {
+			log.Errorf("Failed to create JWT repository: %v", err)
+			return nil, err
+		}
 	}
 
-	return JWTService{key: []byte(key), repository: repo}
+	return &JWTService{key: []byte(key), repository: jwtRepository}, nil
 }
 
 // Sign signs a JWT token with the provided payload.

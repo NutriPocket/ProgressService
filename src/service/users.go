@@ -5,22 +5,26 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 
-	"github.com/MaxiOtero6/go-auth-rest/model"
-	"github.com/MaxiOtero6/go-auth-rest/repository"
+	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/UserService/repository"
 )
 
 type UserService struct {
 	repository repository.IUserRepository
 }
 
-func NewUserService(userRepository *repository.IUserRepository) UserService {
-	var repo repository.IUserRepository = &repository.UserRepository{}
+func NewUserService(userRepository repository.IUserRepository) (*UserService, error) {
+	var err error
 
-	if userRepository != nil {
-		repo = *userRepository
+	if userRepository == nil {
+		userRepository, err = repository.NewUserRepository(nil)
+		if err != nil {
+			log.Errorf("Failed to create user repository: %v", err)
+			return nil, err
+		}
 	}
 
-	return UserService{repository: repo}
+	return &UserService{repository: userRepository}, nil
 }
 
 func (service *UserService) EncodePassword(password string) string {

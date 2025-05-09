@@ -2,11 +2,11 @@
 package utils
 
 import (
-	"github.com/MaxiOtero6/go-auth-rest/routes"
+	"github.com/NutriPocket/UserService/routes"
 	"github.com/gin-gonic/gin"
 
-	middlewareAuth "github.com/MaxiOtero6/go-auth-rest/middleware/auth_middleware"
-	middlewareErr "github.com/MaxiOtero6/go-auth-rest/middleware/error_handler"
+	middlewareAuth "github.com/NutriPocket/UserService/middleware/auth_middleware"
+	middlewareErr "github.com/NutriPocket/UserService/middleware/error_handler"
 )
 
 // SetupRouter sets up the routes for the application.

@@ -4,8 +4,8 @@ package middleware
 import (
 	"strings"
 
-	"github.com/MaxiOtero6/go-auth-rest/model"
-	"github.com/MaxiOtero6/go-auth-rest/service"
+	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/UserService/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,7 +27,7 @@ func getRootPath(urlPath string) string {
 
 // getToken returns the token from the Authorization header
 // authHeader is the Authorization header
-// It returns the token parsed from the Authorization header 
+// It returns the token parsed from the Authorization header
 // It returns an error if the Authorization header is empty or has an invalid format
 func getToken(authHeader string) (token string, err error) {
 	if authHeader == "" {
@@ -73,7 +73,11 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		jwtService := service.NewJWTService(nil)
+		jwtService, err := service.NewJWTService(nil)
+		if err != nil {
+			c.Error(err)
+			return
+		}
 
 		if isBlacklisted, err := jwtService.IsBlacklisted(token); isBlacklisted && err == nil {
 			c.Error(&model.AuthenticationError{

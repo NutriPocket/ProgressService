@@ -4,8 +4,8 @@ package routes
 import (
 	"net/http"
 
-	controller "github.com/MaxiOtero6/go-auth-rest/controller/users"
-	"github.com/MaxiOtero6/go-auth-rest/service"
+	controller "github.com/NutriPocket/UserService/controller/users"
+	"github.com/NutriPocket/UserService/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +18,11 @@ func UsersRoutes(router *gin.Engine) {
 }
 
 func getUsers(c *gin.Context) {
-	service := service.NewUserService(nil)
+	service, err := service.NewUserService(nil)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
 	users, err := service.GetAllUsers()
 
@@ -37,7 +41,11 @@ func getUser(c *gin.Context) {
 
 	controller.ValidateString(username, "username")
 
-	service := service.NewUserService(nil)
+	service, err := service.NewUserService(nil)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
 	user, err := service.GetUser(username)
 

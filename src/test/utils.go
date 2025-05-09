@@ -1,12 +1,16 @@
 package test
 
 import (
-	"log"
 	"os"
 
-	"github.com/MaxiOtero6/go-auth-rest/database"
+	"github.com/NutriPocket/UserService/database"
 	"github.com/joho/godotenv"
+	"github.com/op/go-logging"
+	"gorm.io/gorm"
 )
+
+var log = logging.MustGetLogger("log")
+var gormDB *gorm.DB
 
 func loadEnv() {
 	if ci_test := os.Getenv("CI_TEST"); ci_test != "" {
@@ -21,16 +25,21 @@ func loadEnv() {
 
 func setupDB() {
 	database.ConnectDB()
+	var err error
+	gormDB, err = database.GetPoolConnection()
+	if err != nil {
+		log.Panicf("Failed to connect to database: %v", err)
+	}
 
-	if err := database.DB.Exec("CREATE DATABASE IF NOT EXISTS test").Error; err != nil {
+	if err := gormDB.Exec("CREATE DATABASE IF NOT EXISTS test").Error; err != nil {
 		log.Fatal(err)
 	}
 
-	if err := database.DB.Exec("USE test").Error; err != nil {
+	if err := gormDB.Exec("USE test").Error; err != nil {
 		log.Fatal(err)
 	}
 
-	if err := database.DB.Exec(`
+	if err := gormDB.Exec(`
 		CREATE TABLE IF NOT EXISTS users (
 			id SERIAL PRIMARY KEY,
 			username VARCHAR(100) UNIQUE NOT NULL,
@@ -42,7 +51,7 @@ func setupDB() {
 		log.Fatal(err)
 	}
 
-	if err := database.DB.Exec(`
+	if err := gormDB.Exec(`
 		CREATE TABLE IF NOT EXISTS jwt_blacklist (
 			signature VARCHAR(100) PRIMARY KEY,
 			expires_at TIMESTAMP NOT NULL,
@@ -54,7 +63,7 @@ func setupDB() {
 }
 
 func ClearUsers() {
-	if err := database.DB.Exec(`
+	if err := gormDB.Exec(`
 		DELETE FROM users
 	`).Error; err != nil {
 		log.Fatal(err)
@@ -62,7 +71,7 @@ func ClearUsers() {
 }
 
 func ClearBlacklist() {
-	if err := database.DB.Exec(`
+	if err := gormDB.Exec(`
 		DELETE FROM jwt_blacklist
 	`).Error; err != nil {
 		log.Fatal(err)
@@ -70,12 +79,13 @@ func ClearBlacklist() {
 }
 
 func Setup(testType string) {
-	log.Printf("Setup %s tests!\n", testType)
+	log.Infof("Setup %s tests!\n", testType)
 	loadEnv()
-	log.Println(".env.test loaded")
+	log.Info(".env.test loaded")
 	setupDB()
 }
 
 func TearDown(testType string) {
-	log.Printf("Tear down %s tests!\n", testType)
+	log.Infof("Tear down %s tests!\n", testType)
+	database.Close()
 }

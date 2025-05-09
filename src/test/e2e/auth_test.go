@@ -3,20 +3,24 @@ package e2e_test
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/MaxiOtero6/go-auth-rest/database"
-	"github.com/MaxiOtero6/go-auth-rest/model"
-	"github.com/MaxiOtero6/go-auth-rest/service"
-	"github.com/MaxiOtero6/go-auth-rest/test"
+	"github.com/NutriPocket/UserService/database"
+	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/UserService/service"
+	"github.com/NutriPocket/UserService/test"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPostRegister(t *testing.T) {
+	gormDB, err := database.GetPoolConnection()
+	if err != nil {
+		log.Panicf("Failed to connect to database: %v", err)
+	}
+
 	type RequestData struct {
 		Username string `json:"username"`
 		Email    string `json:"email"`
@@ -55,7 +59,7 @@ func TestPostRegister(t *testing.T) {
 
 		var saved model.User
 
-		database.DB.Raw("SELECT username, email FROM users WHERE username = ?", bodyData.Username).Scan(&saved)
+		gormDB.Raw("SELECT username, email FROM users WHERE username = ?", bodyData.Username).Scan(&saved)
 
 		assert.Equal(t, bodyData.Username, saved.Username)
 	})
@@ -83,7 +87,7 @@ func TestPostRegister(t *testing.T) {
 
 		var saved model.User
 
-		database.DB.Raw("SELECT username, email FROM users WHERE username = ?", "").Scan(&saved)
+		gormDB.Raw("SELECT username, email FROM users WHERE username = ?", "").Scan(&saved)
 
 		assert.Equal(t, "", saved.Username)
 	})
@@ -153,7 +157,7 @@ func TestPostRegister(t *testing.T) {
 	t.Run("It should retrieve a conflict status if the provided username is already in use", func(t *testing.T) {
 		defer test.ClearUsers()
 
-		res := database.DB.Exec(
+		res := gormDB.Exec(
 			`
 				INSERT INTO users (username, email, password) 
 				VALUES (?, ?, ?)
@@ -351,7 +355,7 @@ func TestPostRegister(t *testing.T) {
 	t.Run("It should retrieve a conflict status if the provided email is already in use", func(t *testing.T) {
 		defer test.ClearUsers()
 
-		res := database.DB.Exec(
+		res := gormDB.Exec(
 			`
 				INSERT INTO users (username, email, password) 
 				VALUES (?, ?, ?)
@@ -393,6 +397,11 @@ func TestPostRegister(t *testing.T) {
 }
 
 func TestPostLogin(t *testing.T) {
+	gormDB, err := database.GetPoolConnection()
+	if err != nil {
+		log.Panicf("Failed to connect to database: %v", err)
+	}
+
 	defer test.ClearUsers()
 
 	type RequestData struct {
@@ -400,10 +409,14 @@ func TestPostLogin(t *testing.T) {
 		Password        string `json:"password"`
 	}
 
-	service := service.NewUserService(nil)
+	service, err := service.NewUserService(nil)
+	if err != nil {
+		log.Fatalf("An error ocurred when creating the user service: %v\n", err)
+	}
+
 	encodedPassword := service.EncodePassword("test")
 
-	res := database.DB.Exec(
+	res := gormDB.Exec(
 		`
 			INSERT INTO users (username, email, password) 
 			VALUES (?, ?, ?)
@@ -494,7 +507,7 @@ func TestPostLogin(t *testing.T) {
 
 		var saved model.User
 
-		database.DB.Raw("SELECT username, email FROM users WHERE username = ?", "").Scan(&saved)
+		gormDB.Raw("SELECT username, email FROM users WHERE username = ?", "").Scan(&saved)
 
 		assert.Equal(t, "", saved.Username)
 	})
@@ -646,6 +659,11 @@ func TestPostLogin(t *testing.T) {
 }
 
 func TestPostLogout(t *testing.T) {
+	gormDB, err := database.GetPoolConnection()
+	if err != nil {
+		log.Panicf("Failed to connect to database: %v", err)
+	}
+
 	type RequestData struct {
 		Token string `json:"token"`
 	}
@@ -654,7 +672,10 @@ func TestPostLogout(t *testing.T) {
 		Signature string `json:"signature"`
 	}
 
-	jwtService := service.NewJWTService(nil)
+	jwtService, err := service.NewJWTService(nil)
+	if err != nil {
+		log.Fatalf("An error ocurred when creating the JWT service: %v\n", err)
+	}
 
 	testUser := model.User{
 		Username: "test", Email: "test@test.com",
@@ -687,7 +708,7 @@ func TestPostLogout(t *testing.T) {
 
 		var saved BlacklistedToken
 
-		database.DB.Raw("SELECT signature FROM jwt_blacklist WHERE signature = ?", signature).Scan(&saved)
+		gormDB.Raw("SELECT signature FROM jwt_blacklist WHERE signature = ?", signature).Scan(&saved)
 
 		assert.Equal(t, signature, saved.Signature)
 	})
@@ -715,7 +736,7 @@ func TestPostLogout(t *testing.T) {
 
 		var saved BlacklistedToken
 
-		database.DB.Raw("SELECT signature FROM jwt_blacklist WHERE signature = ?", signature).Scan(&saved)
+		gormDB.Raw("SELECT signature FROM jwt_blacklist WHERE signature = ?", signature).Scan(&saved)
 
 		assert.Equal(t, "", saved.Signature)
 	})
@@ -723,7 +744,7 @@ func TestPostLogout(t *testing.T) {
 	t.Run("It should retrieve a conflict status if the provided token is already blacklisted", func(t *testing.T) {
 		defer test.ClearBlacklist()
 		body := bytes.NewBuffer(jsonData)
-		database.DB.Exec(
+		gormDB.Exec(
 			`
 				INSERT INTO jwt_blacklist (signature, expires_at)
 				VALUES (?, NOW() + INTERVAL 1 DAY)

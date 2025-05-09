@@ -4,8 +4,8 @@ package repository
 import (
 	"errors"
 
-	"github.com/MaxiOtero6/go-auth-rest/database"
-	"github.com/MaxiOtero6/go-auth-rest/model"
+	"github.com/NutriPocket/UserService/database"
+	"github.com/NutriPocket/UserService/model"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -28,12 +28,30 @@ type IUserRepository interface {
 	GetAllUsers() ([]model.User, error)
 }
 
-type UserRepository struct{}
+type UserRepository struct {
+	db IDatabase
+}
 
-func (repository *UserRepository) CreateUser(userData *model.BaseUser) (model.User, error) {
+func NewUserRepository(db IDatabase) (*UserRepository, error) {
+	var err error
+
+	if db == nil {
+		db, err = database.GetPoolConnection()
+		if err != nil {
+			log.Errorf("Failed to connect to database")
+			return nil, err
+		}
+	}
+
+	return &UserRepository{
+		db: db,
+	}, nil
+}
+
+func (r *UserRepository) CreateUser(userData *model.BaseUser) (model.User, error) {
 	var user model.User
 
-	res := database.DB.Exec(`
+	res := r.db.Exec(`
 			INSERT INTO users (username, email, password) 
 			VALUES (?, ?, ?);
 		`,
@@ -51,7 +69,7 @@ func (repository *UserRepository) CreateUser(userData *model.BaseUser) (model.Us
 		return model.User{}, res.Error
 	}
 
-	res = database.DB.Raw("SELECT username, email FROM users WHERE username = ?", userData.Username).Scan(&user)
+	res = r.db.Raw("SELECT username, email FROM users WHERE username = ?", userData.Username).Scan(&user)
 
 	if res.Error != nil {
 		return model.User{}, res.Error
@@ -60,10 +78,10 @@ func (repository *UserRepository) CreateUser(userData *model.BaseUser) (model.Us
 	return user, nil
 }
 
-func (repository *UserRepository) GetUser(username string) (model.User, error) {
+func (r *UserRepository) GetUser(username string) (model.User, error) {
 	var user model.User
 
-	res := database.DB.Raw("SELECT username, email FROM users WHERE username = ?", username).Scan(&user)
+	res := r.db.Raw("SELECT username, email FROM users WHERE username = ?", username).Scan(&user)
 
 	if res.Error != nil {
 		return model.User{}, res.Error
@@ -72,10 +90,10 @@ func (repository *UserRepository) GetUser(username string) (model.User, error) {
 	return user, nil
 }
 
-func (repository *UserRepository) GetUserWithPassword(emailOrUsername string) (model.BaseUser, error) {
+func (r *UserRepository) GetUserWithPassword(emailOrUsername string) (model.BaseUser, error) {
 	var user model.BaseUser
 
-	res := database.DB.Raw("SELECT username, email, password FROM users WHERE username = ? OR email = ?", emailOrUsername, emailOrUsername).Scan(&user)
+	res := r.db.Raw("SELECT username, email, password FROM users WHERE username = ? OR email = ?", emailOrUsername, emailOrUsername).Scan(&user)
 
 	if res.Error != nil {
 		return model.BaseUser{}, res.Error
@@ -84,10 +102,10 @@ func (repository *UserRepository) GetUserWithPassword(emailOrUsername string) (m
 	return user, nil
 }
 
-func (repository *UserRepository) GetAllUsers() ([]model.User, error) {
+func (r *UserRepository) GetAllUsers() ([]model.User, error) {
 	var users []model.User
 
-	res := database.DB.Raw("SELECT username, email FROM users ORDER BY created_at DESC").Scan(&users)
+	res := r.db.Raw("SELECT username, email FROM users ORDER BY created_at DESC").Scan(&users)
 
 	if res.Error != nil {
 		return []model.User{}, res.Error

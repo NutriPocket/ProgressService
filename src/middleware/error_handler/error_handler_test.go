@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/MaxiOtero6/go-auth-rest/model"
+	"github.com/NutriPocket/UserService/model"
 )
 
 func TestParseError(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/MaxiOtero6/go-auth-rest/model"
+	"github.com/NutriPocket/UserService/model"
 )
 
 // UserController is a struct that will be used to validate the user input received from http requests.
