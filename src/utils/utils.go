@@ -16,8 +16,8 @@ func SetupRouter() *gin.Engine {
 
 	router.Use(middlewareErr.ErrorHandler())
 	router.Use(middlewareAuth.AuthMiddleware())
-	routes.AuthRoutes(router)
-	routes.UsersRoutes(router)
+	routes.AnthropometricRoutes(router)
+	routes.FixedUserDataRoutes(router)
 
 	return router
 }
