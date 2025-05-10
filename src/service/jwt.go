@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 	"time"
 
 	"github.com/NutriPocket/UserService/model"
-	"github.com/NutriPocket/UserService/repository"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -18,8 +16,6 @@ import (
 type JWTService struct {
 	// key is the secret key used to sign the JWT tokens.
 	key []byte
-	// repository is the repository that will be used to interact with the jwt_blacklist table.
-	repository repository.IJWTRepository
 }
 
 var jwtKey = os.Getenv("JWT_SECRET_KEY")
@@ -27,22 +23,14 @@ var jwtKey = os.Getenv("JWT_SECRET_KEY")
 // NewJWTService creates a new JWTService with the provided IJWTRepository.
 // jwtRepository is the repository that will be used to interact with the jwt_blacklist table.
 // It returns a new JWTService.
-func NewJWTService(jwtRepository repository.IJWTRepository) (*JWTService, error) {
+func NewJWTService() (*JWTService, error) {
 	var key = []byte("secret")
-	var err error
+
 	if jwtKey != "" {
 		key = []byte(jwtKey)
 	}
 
-	if jwtRepository == nil {
-		jwtRepository, err = repository.NewJWTRepository(nil)
-		if err != nil {
-			log.Errorf("Failed to create JWT repository: %v", err)
-			return nil, err
-		}
-	}
-
-	return &JWTService{key: []byte(key), repository: jwtRepository}, nil
+	return &JWTService{key: []byte(key)}, nil
 }
 
 // Sign signs a JWT token with the provided payload.
@@ -125,36 +113,4 @@ func (service *JWTService) Decode(tokenString string) (model.JWTPayload, error) 
 
 		return model.JWTPayload{}, err
 	}
-}
-
-// Blacklist blacklists a JWT token.
-// tokenString is the token to blacklist.
-// It returns an error if the operation fails.
-func (service *JWTService) Blacklist(tokenString string) error {
-	lastDotIndex := strings.LastIndex(tokenString, ".")
-	signature := tokenString[lastDotIndex:]
-
-	decoded, err := service.Decode(tokenString)
-
-	if err != nil {
-		return err
-	}
-
-	exp := decoded.ExpiresAt.Time
-
-	if err := service.repository.Blacklist(signature, exp); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// IsBlacklisted checks if a JWT token is blacklisted.
-// tokenString is the token to check.
-// It returns true if the token is blacklisted, false otherwise and an error if the operation fails.
-func (service *JWTService) IsBlacklisted(tokenString string) (bool, error) {
-	lastDotIndex := strings.LastIndex(tokenString, ".")
-	signature := tokenString[lastDotIndex:]
-
-	return service.repository.IsBlacklisted(signature)
 }
