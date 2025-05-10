@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/ProgressService/model"
 )
 
 func TestParseError(t *testing.T) {

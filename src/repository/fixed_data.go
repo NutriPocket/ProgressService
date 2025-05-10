@@ -4,8 +4,8 @@ package repository
 import (
 	"errors"
 
-	"github.com/NutriPocket/UserService/database"
-	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/ProgressService/database"
+	"github.com/NutriPocket/ProgressService/model"
 	"github.com/go-sql-driver/mysql"
 )
 

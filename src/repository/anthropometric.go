@@ -4,8 +4,8 @@ package repository
 import (
 	"time"
 
-	"github.com/NutriPocket/UserService/database"
-	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/ProgressService/database"
+	"github.com/NutriPocket/ProgressService/model"
 )
 
 // IAnthropometricRepository is an interface that contains the methods that will implement a repository struct that interact with the users table.

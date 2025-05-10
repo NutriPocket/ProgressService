@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/NutriPocket/UserService/test"
-	"github.com/NutriPocket/UserService/utils"
+	"github.com/NutriPocket/ProgressService/test"
+	"github.com/NutriPocket/ProgressService/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/op/go-logging"
 )

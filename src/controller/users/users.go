@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/ProgressService/model"
 )
 
 // UserController is a struct that will be used to validate the user input received from http requests.

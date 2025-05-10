@@ -3,7 +3,7 @@ package controller
 import (
 	"time"
 
-	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/ProgressService/model"
 	"github.com/gin-gonic/gin"
 )
 

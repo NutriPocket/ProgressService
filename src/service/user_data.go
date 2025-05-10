@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/NutriPocket/UserService/model"
-	"github.com/NutriPocket/UserService/repository"
+	"github.com/NutriPocket/ProgressService/model"
+	"github.com/NutriPocket/ProgressService/repository"
 )
 
 type IUserDataService interface {

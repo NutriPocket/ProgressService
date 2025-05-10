@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/NutriPocket/UserService/database"
-	"github.com/NutriPocket/UserService/utils"
+	"github.com/NutriPocket/ProgressService/database"
+	"github.com/NutriPocket/ProgressService/utils"
 	"github.com/joho/godotenv"
 	"github.com/op/go-logging"
 )

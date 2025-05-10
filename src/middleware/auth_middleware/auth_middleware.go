@@ -4,8 +4,8 @@ package middleware
 import (
 	"strings"
 
-	"github.com/NutriPocket/UserService/model"
-	"github.com/NutriPocket/UserService/service"
+	"github.com/NutriPocket/ProgressService/model"
+	"github.com/NutriPocket/ProgressService/service"
 	"github.com/gin-gonic/gin"
 )
 

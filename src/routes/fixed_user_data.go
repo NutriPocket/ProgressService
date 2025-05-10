@@ -2,7 +2,7 @@
 package routes
 
 import (
-	"github.com/NutriPocket/UserService/controller"
+	"github.com/NutriPocket/ProgressService/controller"
 	"github.com/gin-gonic/gin"
 )
 

@@ -4,7 +4,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/ProgressService/model"
 	"github.com/gin-gonic/gin"
 	"github.com/op/go-logging"
 )

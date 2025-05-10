@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/ProgressService/model"
 	"github.com/golang-jwt/jwt/v5"
 )
 
