@@ -42,3 +42,22 @@ func ValidateDate(date string) error {
 
 	return nil
 }
+
+func ValidateDeadline(date string) error {
+	parsed, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return &model.ValidationError{
+			Title:  "Invalid date",
+			Detail: "The format of the date is invalid, expected format: YYYY-MM-DD",
+		}
+	}
+
+	if parsed.Before(time.Now()) {
+		return &model.ValidationError{
+			Title:  "Invalid deadline",
+			Detail: "The deadline must be in the future",
+		}
+	}
+
+	return nil
+}

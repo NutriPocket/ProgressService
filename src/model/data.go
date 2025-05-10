@@ -28,3 +28,8 @@ type AnthropometricData struct {
 	BoneMass   float32 `json:"bone_mass"`
 	CreatedAt  string  `json:"created_at"`
 }
+
+type ObjectiveData struct {
+	AnthropometricData
+	Deadline string `json:"deadline" binding:"required"`
+}
