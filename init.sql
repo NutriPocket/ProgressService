@@ -12,13 +12,13 @@ CREATE TABLE IF NOT EXISTS fixed_user_data (
 );
 
 CREATE TABLE IF NOT EXISTS anthropometric_data (
-    id SERIAL PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,
     weight DECIMAL(5,2) NOT NULL,
     muscle_mass DECIMAL(5,2),
     fat_mass DECIMAL(5,2),
     bone_mass DECIMAL(5,2),
-    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    PRIMARY KEY (user_id, created_at)
 );
 
 CREATE TABLE IF NOT EXISTS objective (
