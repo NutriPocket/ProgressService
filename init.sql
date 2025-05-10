@@ -4,18 +4,21 @@ USE mydb;
 
 SET time_zone = '+00:00';
 
-CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(100) NOT NULL,
+CREATE TABLE IF NOT EXISTS fixed_user_data (
+    user_id VARCHAR(36) PRIMARY KEY,
+    height SMALLINT UNSIGNED NOT NULL,
+    birthday DATE NOT NULL,
     created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)
 );
 
-CREATE TABLE IF NOT EXISTS jwt_blacklist (
-    signature VARCHAR(100) PRIMARY KEY,
-    expires_at TIMESTAMP NOT NULL,
-    INDEX idx_expires_at (expires_at)
+CREATE TABLE IF NOT EXISTS anthropometric_data (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    weight DECIMAL(5,2) NOT NULL,
+    muscle_mass DECIMAL(5,2),
+    fat_mass DECIMAL(5,2),
+    bone_mass DECIMAL(5,2),
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)
 );
 
 -- Delete expired JWTs
