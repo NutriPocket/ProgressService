@@ -4,8 +4,8 @@ package middleware
 import (
 	"strings"
 
-	"github.com/NutriPocket/UserService/model"
-	"github.com/NutriPocket/UserService/service"
+	"github.com/NutriPocket/ProgressService/model"
+	"github.com/NutriPocket/ProgressService/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -73,24 +73,9 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		jwtService, err := service.NewJWTService(nil)
+		jwtService, err := service.NewJWTService()
 		if err != nil {
 			c.Error(err)
-			return
-		}
-
-		if isBlacklisted, err := jwtService.IsBlacklisted(token); isBlacklisted && err == nil {
-			c.Error(&model.AuthenticationError{
-				Title:  "Invalid authorization",
-				Detail: "The provided token has expired after logging out",
-			})
-
-			c.Abort()
-			return
-		} else if err != nil {
-			c.Error(err)
-
-			c.Abort()
 			return
 		}
 
@@ -103,7 +88,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("authUser", decoded.Payload)
+		c.Set("authUser", &decoded.Payload)
 
 		c.Next()
 	}

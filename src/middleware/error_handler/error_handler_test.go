@@ -6,14 +6,14 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/ProgressService/model"
 )
 
 func TestParseError(t *testing.T) {
 	t.Run("An unknown error is parsed as an internal server error with status code 500", func(t *testing.T) {
 		urlPath := "/"
 
-		expected := errorRfc9457{
+		expected := model.ErrorRfc9457{
 			Title:    "Internal Server Error",
 			Detail:   "An unknown error has occurred",
 			Status:   http.StatusInternalServerError,
@@ -36,7 +36,7 @@ func TestParseError(t *testing.T) {
 		detail := "The specified date has an unknown format, try: YYYY-MM-DD"
 		title := "Unknown date format"
 
-		expected := errorRfc9457{
+		expected := model.ErrorRfc9457{
 			Title:    title,
 			Detail:   detail,
 			Status:   http.StatusBadRequest,
@@ -62,7 +62,7 @@ func TestParseError(t *testing.T) {
 		detail := "The specified token has an unknown format, try: Bearer <token>"
 		title := "Unknown token format"
 
-		expected := errorRfc9457{
+		expected := model.ErrorRfc9457{
 			Title:    title,
 			Detail:   detail,
 			Status:   http.StatusUnauthorized,
@@ -88,7 +88,7 @@ func TestParseError(t *testing.T) {
 		detail := "The specified user is missing, please try another username"
 		title := "User not found"
 
-		expected := errorRfc9457{
+		expected := model.ErrorRfc9457{
 			Title:    title,
 			Detail:   detail,
 			Status:   http.StatusNotFound,
@@ -114,7 +114,7 @@ func TestParseError(t *testing.T) {
 		detail := "The specified user already exists, please try another username"
 		title := "User already exists"
 
-		expected := errorRfc9457{
+		expected := model.ErrorRfc9457{
 			Title:    title,
 			Detail:   detail,
 			Status:   http.StatusConflict,

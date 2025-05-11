@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/NutriPocket/UserService/model"
+	"github.com/NutriPocket/ProgressService/model"
 )
 
 func TestGetRootPath(t *testing.T) {

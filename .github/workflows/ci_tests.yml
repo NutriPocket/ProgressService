@@ -14,7 +14,7 @@ jobs:
                 image: mysql:latest
                 env:
                     MYSQL_ROOT_PASSWORD: password
-                    MYSQL_DATABASE: mydb
+                    MYSQL_DATABASE: test
                 ports:
                     - 3306:3306
                 options: >-
@@ -33,7 +33,8 @@ jobs:
             - name: Set up MySQL
               run: |
                   export MYSQL_PWD=password
-                  mysql --protocol=tcp -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -u root mydb < ./init.sql
+                  mysql --protocol=tcp -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -u root test < src/sql/test-ci.sql
+                  mysql --protocol=tcp -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -u root test < src/sql/tables.sql
                   unset MYSQL_PWD
             - name: Set up Go
               uses: actions/setup-go@v4
@@ -45,7 +46,7 @@ jobs:
               env:
                   DB_USER: root
                   DB_PASSWORD: password
-                  DB_NAME: mydb
+                  DB_NAME: test
                   DB_HOST: localhost
                   HOST: 0.0.0.0
                   PORT: 8080

@@ -2,11 +2,11 @@
 package utils
 
 import (
-	"github.com/NutriPocket/UserService/routes"
+	"github.com/NutriPocket/ProgressService/routes"
 	"github.com/gin-gonic/gin"
 
-	middlewareAuth "github.com/NutriPocket/UserService/middleware/auth_middleware"
-	middlewareErr "github.com/NutriPocket/UserService/middleware/error_handler"
+	middlewareAuth "github.com/NutriPocket/ProgressService/middleware/auth_middleware"
+	middlewareErr "github.com/NutriPocket/ProgressService/middleware/error_handler"
 )
 
 // SetupRouter sets up the routes for the application.
@@ -16,8 +16,9 @@ func SetupRouter() *gin.Engine {
 
 	router.Use(middlewareErr.ErrorHandler())
 	router.Use(middlewareAuth.AuthMiddleware())
-	routes.AuthRoutes(router)
-	routes.UsersRoutes(router)
+	routes.AnthropometricRoutes(router)
+	routes.FixedUserDataRoutes(router)
+	routes.ObjectiveRoutes(router)
 
 	return router
 }

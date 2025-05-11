@@ -1,26 +1,14 @@
 services:
-    api:
-        build: .
-        ports:
-            - "8080:8080"
-        depends_on:
-            db:
-                condition: service_healthy
-        environment:
-            - DATABASE_URL=mysql://root:password@db:3306/mydb
-            - DB_HOST=db
-            - GIN_MODE=release
-
     db:
         image: mysql:latest
         environment:
             MYSQL_ROOT_PASSWORD: password
-            MYSQL_DATABASE: mydb
+            MYSQL_DATABASE: test
         ports:
             - "3306:3306"
         volumes:
             - mysql_data:/data/mysql
-            - ./src/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./src/sql/test.sql:/docker-entrypoint-initdb.d/init.sql
             - ./src/sql/tables.sql:/src/sql/tables.sql
         healthcheck:
             test:

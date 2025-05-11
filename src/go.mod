@@ -1,4 +1,4 @@
-module github.com/NutriPocket/UserService
+module github.com/NutriPocket/ProgressService
 
 go 1.24.3
 

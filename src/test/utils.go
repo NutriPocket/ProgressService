@@ -1,9 +1,12 @@
 package test
 
 import (
+	"fmt"
 	"os"
 
-	"github.com/NutriPocket/UserService/database"
+	"github.com/NutriPocket/ProgressService/database"
+	"github.com/NutriPocket/ProgressService/model"
+	"github.com/NutriPocket/ProgressService/service"
 	"github.com/joho/godotenv"
 	"github.com/op/go-logging"
 	"gorm.io/gorm"
@@ -30,49 +33,23 @@ func setupDB() {
 	if err != nil {
 		log.Panicf("Failed to connect to database: %v", err)
 	}
-
-	if err := gormDB.Exec("CREATE DATABASE IF NOT EXISTS test").Error; err != nil {
-		log.Fatal(err)
-	}
-
-	if err := gormDB.Exec("USE test").Error; err != nil {
-		log.Fatal(err)
-	}
-
-	if err := gormDB.Exec(`
-		CREATE TABLE IF NOT EXISTS users (
-			id SERIAL PRIMARY KEY,
-			username VARCHAR(100) UNIQUE NOT NULL,
-			email VARCHAR(100) UNIQUE NOT NULL,
-			password VARCHAR(100) NOT NULL,
-			created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)
-		)
-	`).Error; err != nil {
-		log.Fatal(err)
-	}
-
-	if err := gormDB.Exec(`
-		CREATE TABLE IF NOT EXISTS jwt_blacklist (
-			signature VARCHAR(100) PRIMARY KEY,
-			expires_at TIMESTAMP NOT NULL,
-			INDEX idx_expires_at (expires_at)
-		)
-	`).Error; err != nil {
-		log.Fatal(err)
-	}
 }
 
-func ClearUsers() {
+func ClearAllData() {
 	if err := gormDB.Exec(`
-		DELETE FROM users
+		DELETE FROM fixed_user_data;
 	`).Error; err != nil {
 		log.Fatal(err)
 	}
-}
 
-func ClearBlacklist() {
 	if err := gormDB.Exec(`
-		DELETE FROM jwt_blacklist
+		DELETE FROM anthropometric_data;
+	`).Error; err != nil {
+		log.Fatal(err)
+	}
+
+	if err := gormDB.Exec(`
+		DELETE FROM objective;
 	`).Error; err != nil {
 		log.Fatal(err)
 	}
@@ -88,4 +65,19 @@ func Setup(testType string) {
 func TearDown(testType string) {
 	log.Infof("Tear down %s tests!\n", testType)
 	database.Close()
+}
+
+func GetBearerToken(testUser *model.User) string {
+	jwtService, err := service.NewJWTService()
+	if err != nil {
+		log.Fatalf("An error ocurred when creating the JWT service: %v\n", err)
+	}
+
+	token, err := jwtService.Sign(*testUser)
+
+	if err != nil {
+		log.Fatalf("An error ocurred when signing testUser: %v\n", err)
+	}
+
+	return fmt.Sprintf("Bearer %s", token)
 }
