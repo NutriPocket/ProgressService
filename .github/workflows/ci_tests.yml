@@ -45,7 +45,7 @@ jobs:
               env:
                   DB_USER: root
                   DB_PASSWORD: password
-                  DB_NAME: mydb
+                  DB_NAME: test
                   DB_HOST: localhost
                   HOST: 0.0.0.0
                   PORT: 8080

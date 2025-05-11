@@ -1,6 +1,7 @@
 test:
 	docker-compose -f docker-compose-test.yaml up -d
-	go test -v ./...
+	sleep 15
+	cd src && go test -v ./... && cd ..
 	docker-compose -f docker-compose-test.yaml down --volumes
 .PHONY: test
 
