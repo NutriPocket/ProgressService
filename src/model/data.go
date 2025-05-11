@@ -21,12 +21,12 @@ type FixedUserData struct {
 }
 
 type AnthropometricData struct {
-	UserID     string  `json:"user_id"`
-	Weight     float32 `json:"weight" binding:"required"`
-	MuscleMass float32 `json:"muscle_mass"`
-	FatMass    float32 `json:"fat_mass"`
-	BoneMass   float32 `json:"bone_mass"`
-	CreatedAt  string  `json:"created_at"`
+	UserID     string   `json:"user_id"`
+	Weight     float32  `json:"weight" binding:"required"`
+	MuscleMass *float32 `json:"muscle_mass"`
+	FatMass    *float32 `json:"fat_mass"`
+	BoneMass   *float32 `json:"bone_mass"`
+	CreatedAt  string   `json:"created_at"`
 }
 
 type ObjectiveData struct {

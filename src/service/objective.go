@@ -44,15 +44,15 @@ func (s *ObjectiveService) PutObjective(data *model.ObjectiveData) (ret model.Ob
 	}
 
 	storedData.Weight = data.Weight
-	if data.MuscleMass != 0.0 {
+	if data.MuscleMass != nil {
 		storedData.MuscleMass = data.MuscleMass
 	}
 
-	if data.FatMass != 0.0 {
+	if data.FatMass != nil {
 		storedData.FatMass = data.FatMass
 	}
 
-	if data.BoneMass != 0.0 {
+	if data.BoneMass != nil {
 		storedData.BoneMass = data.BoneMass
 	}
 

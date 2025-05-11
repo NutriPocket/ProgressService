@@ -46,26 +46,26 @@ func (s *UserDataService) PutAnthropometricData(data *model.AnthropometricData) 
 	var storedData *model.AnthropometricData = &model.AnthropometricData{}
 	err = s.ar.GetTodayDataByUserId(data.UserID, storedData)
 	if err != nil {
+		if _, ok := err.(*model.NotFoundError); ok {
+			ret, err = s.ar.CreateData(data)
+			created = true
+			return
+		}
+
 		log.Errorf("Failed to check current anthropometric data for user %s: %v", data.UserID, err)
 		return
 	}
 
-	if storedData.UserID == "" {
-		ret, err = s.ar.CreateData(data)
-		created = true
-		return
-	}
-
 	storedData.Weight = data.Weight
-	if data.MuscleMass != 0.0 {
+	if data.MuscleMass != nil {
 		storedData.MuscleMass = data.MuscleMass
 	}
 
-	if data.FatMass != 0.0 {
+	if data.FatMass != nil {
 		storedData.FatMass = data.FatMass
 	}
 
-	if data.BoneMass != 0.0 {
+	if data.BoneMass != nil {
 		storedData.BoneMass = data.BoneMass
 	}
 
@@ -88,13 +88,13 @@ func (s *UserDataService) PutFixedData(data *model.BaseFixedUserData) (ret model
 	var storedData *model.BaseFixedUserData = &model.BaseFixedUserData{}
 	err = s.fdr.GetBaseFixedUserData(data.UserID, storedData)
 	if err != nil {
-		log.Errorf("Failed to get fixed user data for user %s: %v", data.UserID, err)
-		return
-	}
-
-	if storedData.UserID == "" {
-		ret, err = s.fdr.CreateData(data)
+		if _, ok := err.(*model.NotFoundError); ok {
+			ret, err = s.fdr.CreateData(data)
 		created = true
+		return
+		}
+
+		log.Errorf("Failed to get fixed user data for user %s: %v", data.UserID, err)
 		return
 	}
 
