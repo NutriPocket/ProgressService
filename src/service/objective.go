@@ -33,13 +33,13 @@ func (s *ObjectiveService) PutObjective(data *model.ObjectiveData) (ret model.Ob
 	var storedData *model.ObjectiveData = &model.ObjectiveData{}
 	err = s.r.GetObjectiveByUserId(data.UserID, storedData)
 	if err != nil {
-		log.Errorf("Failed to check current anthropometric data for user %s: %v", data.UserID, err)
-		return
-	}
+		if _, ok := err.(*model.NotFoundError); ok {
+			ret, err = s.r.CreateObjective(data)
+			created = true
+			return
+		}
 
-	if storedData.UserID == "" {
-		ret, err = s.r.CreateObjective(data)
-		created = true
+		log.Errorf("Failed to check current anthropometric data for user %s: %v", data.UserID, err)
 		return
 	}
 

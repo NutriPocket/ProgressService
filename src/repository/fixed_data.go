@@ -99,8 +99,8 @@ func (r *FixedDataRepository) GetBaseFixedUserData(userId string, data *model.Ba
 
 	if data.UserID == "" {
 		return &model.NotFoundError{
-			Title:  "Anthropometric data not found",
-			Detail: "No anthropometric data not found for user " + userId,
+			Title:  "Fixed data not found",
+			Detail: "No fixed data not found for user " + userId,
 		}
 	}
 

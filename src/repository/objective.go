@@ -85,5 +85,12 @@ func (r *ObjectiveRepository) GetObjectiveByUserId(userId string, data *model.Ob
 		return res.Error
 	}
 
+	if data.UserID == "" {
+		return &model.NotFoundError{
+			Title:  "Objective data not found",
+			Detail: "No objective data not found for user " + userId,
+		}
+	}
+
 	return nil
 }
