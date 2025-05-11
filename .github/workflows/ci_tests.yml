@@ -34,6 +34,7 @@ jobs:
               run: |
                   export MYSQL_PWD=password
                   mysql --protocol=tcp -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -u root mydb < src/sql/test-ci.sql
+                  mysql --protocol=tcp -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -u root mydb < src/sql/tables.sql
                   unset MYSQL_PWD
             - name: Set up Go
               uses: actions/setup-go@v4
