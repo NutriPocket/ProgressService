@@ -88,7 +88,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("authUser", decoded.Payload)
+		c.Set("authUser", &decoded.Payload)
 
 		c.Next()
 	}
