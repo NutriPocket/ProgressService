@@ -1,9 +1,3 @@
-CREATE DATABASE IF NOT EXISTS mydb; 
-
-USE mydb;
-
-SET time_zone = '+00:00';
-
 CREATE TABLE IF NOT EXISTS fixed_user_data (
     user_id VARCHAR(36) PRIMARY KEY,
     height SMALLINT UNSIGNED NOT NULL,
