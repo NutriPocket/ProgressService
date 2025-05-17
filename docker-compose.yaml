@@ -2,7 +2,7 @@ services:
     api:
         build: .
         ports:
-            - "8080:8080"
+            - "8082:8082"
         depends_on:
             db:
                 condition: service_healthy
@@ -10,6 +10,9 @@ services:
             - DATABASE_URL=mysql://root:password@db:3306/mydb
             - DB_HOST=db
             - GIN_MODE=release
+        volumes:
+            - ./.env:/.env:ro
+
 
     db:
         image: mysql:latest

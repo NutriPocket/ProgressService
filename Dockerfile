@@ -15,11 +15,7 @@ FROM alpine:latest
 
 WORKDIR /code
 
-COPY --from=builder /bin/app /code/bin/app
+COPY --from=builder /bin/app /code/
 
-COPY .env .
-
-WORKDIR /code/bin
-
-CMD ["/code/bin/app"]
+CMD ["/code/app"]
 

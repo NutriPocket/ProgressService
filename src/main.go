@@ -12,7 +12,12 @@ import (
 var log = logging.MustGetLogger("log")
 
 func loadEnv() {
-	err := godotenv.Load("../.env")
+	envPath := os.Getenv("ENV_PATH")
+	if envPath == "" {
+		envPath = "../.env"
+	}
+
+	err := godotenv.Load(envPath)
 	if err != nil {
 		log.Fatalf("Error loading .env file")
 	}
@@ -57,8 +62,17 @@ func main() {
 	router := utils.SetupRouter()
 
 	host := os.Getenv("HOST")
+	if host == "" {
+		host = "0.0.0.0"
+	}
+
 	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8082"
+	}
+
 	addr := host + ":" + port
 
+	log.Infof("Starting server on %s", addr)
 	router.Run(addr)
 }
