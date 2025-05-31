@@ -34,6 +34,10 @@ func ConnectDB() {
 		db_host = "0.0.0.0"
 	}
 
+	if db_port == "" {
+		db_port = "3306"
+	}
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=UTC", db_user, db_password, db_host, db_port, db_name)
 
 	log.Infof("DSN: %s\n", dsn)
