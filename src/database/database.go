@@ -28,12 +28,13 @@ func ConnectDB() {
 	db_name := os.Getenv("DB_NAME")
 
 	db_host := os.Getenv("DB_HOST")
+	db_port := os.Getenv("DB_PORT")
 
 	if db_host == "" {
 		db_host = "0.0.0.0"
 	}
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8mb4&parseTime=True&loc=UTC", db_user, db_password, db_host, db_name)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=UTC", db_user, db_password, db_host, db_port, db_name)
 
 	log.Infof("DSN: %s\n", dsn)
 
