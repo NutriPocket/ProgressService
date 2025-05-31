@@ -6,14 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func FixedUserDataRoutes(router *gin.Engine) {
-	{
-		routes := router.Group("/users/:userId/fixedData")
-		routes.PUT("/", putFixedData)
-		routes.GET("/", getFixedData)
-	}
-}
-
 func putFixedData(c *gin.Context) {
 	controller, err := controller.NewFixedDataController(nil)
 	if err != nil {

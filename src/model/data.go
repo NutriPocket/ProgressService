@@ -33,3 +33,26 @@ type ObjectiveData struct {
 	AnthropometricData
 	Deadline string `json:"deadline" binding:"required"`
 }
+
+type Schedule struct {
+	Day       string `json:"day" binding:"required"`
+	StartHour int    `json:"start_hour" binding:"required"`
+	EndHour   int    `json:"end_hour" binding:"required"`
+}
+
+type RoutineDTO struct {
+	UserID      string `json:"user_id" binding:"-"`
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description"`
+	Schedule
+}
+
+type RoutineData struct {
+	RoutineDTO
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+type FreeSchedule struct {
+	Schedules []Schedule `json:"schedules"`
+}

@@ -93,7 +93,7 @@ func (r *AnthropometricRepository) GetDataByUserIdAndDate(userId string, date st
 			AND DATE(created_at) = ?
 		LIMIT 1;`,
 		userId, date,
-	).Scan(data)
+	).Scan(&data)
 
 	if res.Error != nil {
 		return res.Error

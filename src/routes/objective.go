@@ -6,14 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ObjectiveRoutes(router *gin.Engine) {
-	{
-		routes := router.Group("/users/:userId/objectives")
-		routes.PUT("/", putObjectiveData)
-		routes.GET("/", getObjectiveData)
-	}
-}
-
 func putObjectiveData(c *gin.Context) {
 	controller, err := controller.NewObjectiveController(nil)
 	if err != nil {

@@ -49,7 +49,7 @@ func (r *FixedDataRepository) CreateData(data *model.BaseFixedUserData) (model.F
 		log.Errorf("Failed to create fixed user data for user %s: %v", data.UserID, res.Error)
 
 		if errors.Is(res.Error, &mysql.MySQLError{Number: 1062}) {
-			return model.FixedUserData{}, &model.EntityAlreadyExistsError{
+			return model.FixedUserData{}, &model.ConflictError{
 				Detail: "User fixed data already exists for the user " + data.UserID,
 				Title:  "User fixed data already exists",
 			}
