@@ -24,3 +24,15 @@ CREATE TABLE IF NOT EXISTS objective (
     deadline DATE NOT NULL,
     created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
 );
+
+CREATE TABLE IF NOT EXISTS user_routines (
+    user_id VARCHAR(36) NOT NULL,
+    name VARCHAR(64) NOT NULL,
+    description VARCHAR(512),
+    day VARCHAR(10) NOT NULL,
+    start_hour SMALLINT NOT NULL,
+    end_hour SMALLINT NOT NULL,
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (user_id, day, start_hour, end_hour)
+);

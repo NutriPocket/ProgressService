@@ -30,11 +30,11 @@ func (e *NotFoundError) Error() string {
 	return fmt.Sprintf("%s, %s", e.Title, e.Detail)
 }
 
-type EntityAlreadyExistsError struct {
+type ConflictError struct {
 	Detail string
 	Title  string
 }
 
-func (e *EntityAlreadyExistsError) Error() string {
+func (e *ConflictError) Error() string {
 	return fmt.Sprintf("%s, %s", e.Title, e.Detail)
 }
