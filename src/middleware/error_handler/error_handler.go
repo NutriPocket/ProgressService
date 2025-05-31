@@ -33,7 +33,7 @@ func parseError(err error, urlPath string) model.ErrorRfc9457 {
 		status = http.StatusNotFound
 		detail = e.Detail
 		title = e.Title
-	case *model.EntityAlreadyExistsError:
+	case *model.ConflictError:
 		status = http.StatusConflict
 		detail = e.Detail
 		title = e.Title

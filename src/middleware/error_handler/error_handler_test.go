@@ -122,7 +122,7 @@ func TestParseError(t *testing.T) {
 			Instance: "/",
 		}
 
-		err := &model.EntityAlreadyExistsError{
+		err := &model.ConflictError{
 			Title:  title,
 			Detail: detail,
 		}
