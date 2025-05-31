@@ -75,7 +75,7 @@ func (r *RoutineRepository) GetRoutinesByInterval(userId string, schedule *model
 	res := r.db.Raw(`
 		SELECT user_id, name, description, day, start_hour, end_hour, created_at, updated_at
 		FROM user_routines
-		WHERE day = ? AND end_hour >= ? AND start_hour < ? AND user_id = ?;
+		WHERE day = ? AND end_hour > ? AND start_hour < ? AND user_id = ?;
 	`,
 		schedule.Day, schedule.StartHour, schedule.EndHour, userId,
 	).Scan(&routines)

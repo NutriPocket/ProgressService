@@ -148,6 +148,114 @@ func TestPostUserRoutine(t *testing.T) {
 		assert.Equal(t, "There is already a routine scheduled in the same time interval or subinterval", response.Detail)
 	})
 
+	t.Run("POST /users/:userId/routines/ - Border Conflicting Schedule start0 = end1", func(t *testing.T) {
+		defer test.ClearAllData()
+
+		// Create first routine
+		firstRoutine := model.RoutineDTO{
+			UserID:      userId,
+			Name:        "Morning Workout",
+			Description: "Cardio and strength training",
+			Schedule: model.Schedule{
+				Day:       "Monday",
+				StartHour: 8,
+				EndHour:   10,
+			},
+		}
+
+		body, _ := json.Marshal(firstRoutine)
+		req, _ := http.NewRequest(http.MethodPost, baseURL, bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Add("Authorization", bearerToken)
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		// Try to create conflicting routine
+		conflictingRoutine := model.RoutineDTO{
+			UserID:      userId,
+			Name:        "Conflicting Workout",
+			Description: "This shouldn't fail",
+			Schedule: model.Schedule{
+				Day:       "Monday",
+				StartHour: 7, // Overlaps with first routine
+				EndHour:   8,
+			},
+		}
+
+		body, _ = json.Marshal(conflictingRoutine)
+		req, _ = http.NewRequest(http.MethodPost, baseURL, bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Add("Authorization", bearerToken)
+		w = httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusCreated, w.Code, "Status code should be 201")
+
+		actual := unmarshallRoutineData(t, w.Body.Bytes())
+
+		assert.Equal(t, conflictingRoutine.UserID, actual.UserID)
+		assert.Equal(t, conflictingRoutine.Name, actual.Name)
+		assert.Equal(t, conflictingRoutine.Description, actual.Description)
+		assert.Equal(t, conflictingRoutine.Day, actual.Day)
+		assert.Equal(t, conflictingRoutine.StartHour, actual.StartHour)
+		assert.Equal(t, conflictingRoutine.EndHour, actual.EndHour)
+		assert.NotEmpty(t, actual.CreatedAt)
+	})
+
+	t.Run("POST /users/:userId/routines/ - Border Conflicting Schedule end0 = start1", func(t *testing.T) {
+		defer test.ClearAllData()
+
+		// Create first routine
+		firstRoutine := model.RoutineDTO{
+			UserID:      userId,
+			Name:        "Morning Workout",
+			Description: "Cardio and strength training",
+			Schedule: model.Schedule{
+				Day:       "Monday",
+				StartHour: 8,
+				EndHour:   10,
+			},
+		}
+
+		body, _ := json.Marshal(firstRoutine)
+		req, _ := http.NewRequest(http.MethodPost, baseURL, bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Add("Authorization", bearerToken)
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		// Try to create conflicting routine
+		conflictingRoutine := model.RoutineDTO{
+			UserID:      userId,
+			Name:        "Conflicting Workout",
+			Description: "This shouldn't fail",
+			Schedule: model.Schedule{
+				Day:       "Monday",
+				StartHour: 10, // Overlaps with first routine
+				EndHour:   12,
+			},
+		}
+
+		body, _ = json.Marshal(conflictingRoutine)
+		req, _ = http.NewRequest(http.MethodPost, baseURL, bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Add("Authorization", bearerToken)
+		w = httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusCreated, w.Code, "Status code should be 201")
+
+		actual := unmarshallRoutineData(t, w.Body.Bytes())
+
+		assert.Equal(t, conflictingRoutine.UserID, actual.UserID)
+		assert.Equal(t, conflictingRoutine.Name, actual.Name)
+		assert.Equal(t, conflictingRoutine.Description, actual.Description)
+		assert.Equal(t, conflictingRoutine.Day, actual.Day)
+		assert.Equal(t, conflictingRoutine.StartHour, actual.StartHour)
+		assert.Equal(t, conflictingRoutine.EndHour, actual.EndHour)
+		assert.NotEmpty(t, actual.CreatedAt)
+	})
+
 	t.Run("POST /users/:userId/routines/ - Unauthorized", func(t *testing.T) {
 		defer test.ClearAllData()
 
