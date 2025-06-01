@@ -89,7 +89,7 @@ func (s *RoutineService) getFreeHours(users []string) (map[string][]bool, error)
 		}
 
 		for _, routine := range routines {
-			for i := routine.StartHour; i < routine.EndHour; i++ {
+			for i := routine.StartHour + 1; i <= routine.EndHour; i++ {
 				if i >= 0 && i < len(freeSchedules[routine.Day]) {
 					freeSchedules[routine.Day][i] = false
 				}
@@ -110,8 +110,9 @@ func (s *RoutineService) freeHoursToSchedule(freeSchedules map[string][]bool) []
 		for i, isFree := range hours {
 			if isFree {
 				if start == -1 {
-					start = i
-					end = i + 1
+					start = max(i-1, 0)
+
+					end = start + 1
 				}
 
 				if i > end {
