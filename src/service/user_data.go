@@ -8,7 +8,7 @@ import (
 type IUserDataService interface {
 	PutAnthropometricData(data *model.AnthropometricData) (model.AnthropometricData, error, bool)
 	GetAnthropometricDataByUserAndDay(userId string, date string) (model.AnthropometricData, error)
-	GetAllAnthropometricDataByUser(userId string) ([]model.AnthropometricData, error)
+	GetAllAnthropometricDataByUser(userId string, params *model.GetAnthropometricParams) ([]model.AnthropometricData, error)
 	PutFixedData(data *model.BaseFixedUserData) (model.FixedUserData, error, bool)
 	GetFixedDataByUser(userId string) (model.FixedUserData, error)
 	GetBaseFixedUserDataByUser(userId string) (model.BaseFixedUserData, error)
@@ -80,8 +80,8 @@ func (s *UserDataService) GetAnthropometricDataByUserAndDay(userId string, date 
 	return ret, err
 }
 
-func (s *UserDataService) GetAllAnthropometricDataByUser(userId string) ([]model.AnthropometricData, error) {
-	return s.ar.GetAllDataByUserId(userId)
+func (s *UserDataService) GetAllAnthropometricDataByUser(userId string, params *model.GetAnthropometricParams) ([]model.AnthropometricData, error) {
+	return s.ar.GetAllDataByUserId(userId, params)
 }
 
 func (s *UserDataService) PutFixedData(data *model.BaseFixedUserData) (ret model.FixedUserData, err error, created bool) {
