@@ -84,8 +84,19 @@ func (c *AnthropometricController) GetAnthropometricDataByUser(ctx *gin.Context)
 		data, err = c.s.GetAnthropometricDataByUserAndDay(authUser.ID, date)
 		jsonRet["data"] = data
 	} else {
+		startDate := ctx.Query("startDate")
+		endDate := ctx.Query("endDate")
+		params := &model.GetAnthropometricParams{}
+		if startDate != "" {
+			params.StartDate = &startDate
+		}
+
+		if endDate != "" {
+			params.EndDate = &endDate
+		}
+
 		var data []model.AnthropometricData
-		data, err = c.s.GetAllAnthropometricDataByUser(authUser.ID)
+		data, err = c.s.GetAllAnthropometricDataByUser(authUser.ID, params)
 		jsonRet["data"] = data
 	}
 

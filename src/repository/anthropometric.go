@@ -14,7 +14,7 @@ type IAnthropometricRepository interface {
 	ReplaceTodayData(data *model.AnthropometricData) (model.AnthropometricData, error)
 	GetDataByUserIdAndDate(userId string, date string, data *model.AnthropometricData) error
 	GetTodayDataByUserId(userId string, data *model.AnthropometricData) error
-	GetAllDataByUserId(userId string) ([]model.AnthropometricData, error)
+	GetAllDataByUserId(userId string, params *model.GetAnthropometricParams) ([]model.AnthropometricData, error)
 }
 
 type AnthropometricRepository struct {
@@ -109,15 +109,17 @@ func (r *AnthropometricRepository) GetDataByUserIdAndDate(userId string, date st
 	return nil
 }
 
-func (r *AnthropometricRepository) GetAllDataByUserId(userId string) ([]model.AnthropometricData, error) {
+func (r *AnthropometricRepository) GetAllDataByUserId(userId string, params *model.GetAnthropometricParams) ([]model.AnthropometricData, error) {
 	var data []model.AnthropometricData = make([]model.AnthropometricData, 0)
 
 	res := r.db.Raw(`
 		SELECT user_id, weight, muscle_mass, fat_mass, bone_mass, created_at
 		FROM anthropometric_data 
 		WHERE user_id = ? 
+			AND (created_at >= ? OR ? IS NULL)
+			AND (created_at <= ? OR ? IS NULL)
 		ORDER BY created_at DESC;
-	`, userId,
+	`, userId, params.StartDate, params.StartDate, params.EndDate, params.EndDate,
 	).Scan(&data)
 
 	if res.Error != nil {
