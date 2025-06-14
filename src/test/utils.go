@@ -59,6 +59,12 @@ func ClearAllData() {
 	`).Error; err != nil {
 		log.Fatal(err)
 	}
+
+	if err := gormDB.Exec(`
+		DELETE FROM exercise_by_day;
+	`).Error; err != nil {
+		log.Fatal(err)
+	}
 }
 
 func Setup(testType string) {
