@@ -27,5 +27,12 @@ func UsersRoutes(router *gin.Engine) {
 		routes.GET("/:userId/routines/", getRoutines)
 		routes.DELETE("/:userId/routines/", deleteRoutine)
 		routes.GET("/freeSchedules/", getFreeSchedules)
+		/*
+			Exercise routes
+		*/
+		routes.POST("/:userId/exercises/", postExercise)
+		routes.GET("/:userId/exercises/", getExercisesByUserIdAndDate)
+		routes.PUT("/:userId/exercises/:id", putExercise)
+		routes.DELETE("/:userId/exercises/:id", deleteExercise)
 	}
 }

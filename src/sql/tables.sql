@@ -36,3 +36,11 @@ CREATE TABLE IF NOT EXISTS user_routines (
     updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     PRIMARY KEY (user_id, day, start_hour, end_hour)
 );
+
+CREATE TABLE IF NOT EXISTS exercise_by_day (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    exercise_name VARCHAR(64) NOT NULL,
+    calories_burned DECIMAL(6,2) NOT NULL,
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)
+);
