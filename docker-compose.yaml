@@ -24,6 +24,7 @@ services:
             - mysql_data:/data/mysql
             - ./src/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
             - ./src/sql/tables.sql:/src/sql/tables.sql
+            - ./src/sql/default.sql:/src/sql/default.sql
         healthcheck:
             test:
                 [
